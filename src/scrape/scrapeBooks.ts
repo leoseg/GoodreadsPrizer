@@ -28,6 +28,7 @@ const getNumberOfBooks = async (userID: string, userName: string): Promise<numbe
             throw new Error("No books number found in scraped page.");
         }
     } catch (error) {
+        console.error("Error occurred:", error);
         throw error
     }
 
