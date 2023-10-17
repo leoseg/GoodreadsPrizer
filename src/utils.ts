@@ -1,6 +1,10 @@
 import puppeteer, { Page } from "puppeteer";
-import {minimal_args, userAgents} from "./scrape/scrapeConfigs";
+import {minimal_args, userAgents} from "./scrapeGoodReadsBooks/scrapeConfigs";
 
+/**
+ * Validates the format of the credentials
+ * @param credentials credentials
+ */
 export const validateCredentialFormat = (credentials:{
     "GoodReadsUserID":string,
     "GoodReadsUserName":string,
@@ -10,6 +14,10 @@ export const validateCredentialFormat = (credentials:{
     return true
 }
 
+/**
+ * Loads a puppeteer page with the given url
+ * @param url url to load
+ */
 export async function loadPuppeteerPage(url:string):Promise<Page> {
     console.time("loadbrowser");
     const browser = await puppeteer.launch({
