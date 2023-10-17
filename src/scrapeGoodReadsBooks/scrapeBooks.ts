@@ -1,8 +1,8 @@
 import axios from "axios";
 import * as cheerio from 'cheerio';
-import {scrollToBottom, getNumberBooks, getBooksData, userNameCheck} from "./scrapeHelperFuncs";
+import {scrollToBottom, getNumberBooks, getBooksData, userNameCheck} from "./scrapeBooksHelpers";
 import dotenv from 'dotenv';
-import {userAgents} from "./scrapeConfigs";
+import {userAgents} from "./scrapeBooksConfigs";
 import {loadPuppeteerPage} from "../utils";
 dotenv.config();
 /**

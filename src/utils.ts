@@ -1,5 +1,5 @@
 import puppeteer, { Page } from "puppeteer";
-import {minimal_args, userAgents} from "./scrapeGoodReadsBooks/scrapeConfigs";
+import {minimal_args, userAgents} from "./scrapeGoodReadsBooks/scrapeBooksConfigs";
 
 /**
  * Validates the format of the credentials

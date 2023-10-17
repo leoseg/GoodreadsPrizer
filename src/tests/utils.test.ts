@@ -1,7 +1,7 @@
 import { Page } from 'puppeteer';
-import { loadPuppeteerPage } from './utils';
+import { loadPuppeteerPage } from '../utils';
 import dotenv from 'dotenv';
-import {scrollToBottom} from "./scrapeGoodReadsBooks/scrapeHelperFuncs";
+
 
 dotenv.config();
 describe('utils', () => {

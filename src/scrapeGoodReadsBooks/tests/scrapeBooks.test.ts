@@ -1,6 +1,6 @@
 import { getNumberOfBooks, getBookList } from "../scrapeBooks";
 import axios from 'axios';
-import {getNumberBooks, userNameCheck,getBooksData,scrollToBottom} from "../scrapeHelperFuncs";
+import {getNumberBooks, userNameCheck,getBooksData,scrollToBottom} from "../scrapeBooksHelpers";
 import {loadPuppeteerPage} from "../../utils";
 jest.mock('axios');
 jest.mock('../scrapeGoodReadsBooks/scrapeHelperFuncs');
