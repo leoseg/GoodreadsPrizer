@@ -5,4 +5,5 @@ module.exports = {
   ...tsJestPreset,
   ...puppeteerPreset,
   testEnvironment: 'jest-environment-puppeteer',
+  roots: ['<rootDir>/src'],
 };

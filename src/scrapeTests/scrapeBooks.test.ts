@@ -1,15 +1,12 @@
-import axios from 'axios';
 import { getNumberOfBooks, getBookList } from "../scrape/scrapeBooks";
-import {Page} from "puppeteer";
-
-// Mock axios get method
+import axios from 'axios';
+import {getNumberBooks, userNameCheck,getBooksData,scrollToBottom} from "../scrape/scrapeHelperFuncs";
+import {loadPuppeteerPage} from "../utils";
 jest.mock('axios');
-jest.mock('../scrape/scrapeHelperFuncs', () => ({
-    getNumberBooks: jest.fn(),
-    scrollToBottom: jest.fn(),
-    getBooksData: jest.fn(),
-}));
+jest.mock('../scrape/scrapeHelperFuncs');
+jest.mock("../utils");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
+axios.get = jest.fn()
 
 describe('scrapeBooks', () => {
     describe('getNumberOfBooks', () => {
@@ -29,6 +26,10 @@ describe('scrapeBooks', () => {
                         <div class="userShelf"> <a>
                             Books (${expectedNumber})</a>
                         </div>`,
+                status: 200,
+                statusText: 'OK',
+                headers: {},
+                config: {},
             });
 
             const number = await getNumberOfBooks(userID, userName);
@@ -39,7 +40,6 @@ describe('scrapeBooks', () => {
                 expect.any(Object)
             );
         });
-
         it('should throw an error if no books number found', async () => {
             const userID = '123';
             const userName = 'testuser';
@@ -66,55 +66,62 @@ describe('scrapeBooks', () => {
     });
 
     describe('getBookList', () => {
-        let mockPage: Page;
-
+        let mockPage: { close: typeof jest.fn};
+        let getNumberBooksMock: jest.Mock<any, any, any>
         beforeEach(() => {
-            // Create a mock instance of the Page class
-            mockPage = {} as Page;
+            mockPage = {
+                close: jest.fn(),
+            };
+            // Mock the necessary functions
+            (loadPuppeteerPage as jest.Mock).mockResolvedValue(
+                mockPage
+            );
+            getNumberBooksMock =getNumberBooks as jest.Mock
+
+        })
+        afterEach(() => {
+            jest.resetAllMocks();
         });
 
-        afterEach(() => {
-            jest.clearAllMocks();
-        });
 
         it('should call the necessary functions with the correct values', async () => {
             const userID = '123';
             const userName = 'testuser';
             const url = `https://www.goodreads.com/review/list/${userID}-${userName}?shelf=to-read`;
 
-            // Mock the necessary functions
-            const { getNumberBooks, scrollToBottom, getBooksData } = require('../scrape/scrapeHelperFuncs');
-            getNumberBooks.mockResolvedValue(10);
-            getBooksData.mockResolvedValue([['Book 1', 'Author 1'], ['Book 2', 'Author 2']]);
+            getNumberBooksMock.mockImplementationOnce(() => Promise.resolve(2));
+            (getBooksData as jest.Mock).mockResolvedValue([['Book 1', 'Author 1'], ['Book 2', 'Author 2']]);
 
             // Call the function
             await getBookList(userID, userName);
 
             // Check if the functions were called with the correct values
+            expect(loadPuppeteerPage).toHaveBeenCalledWith(url);
+            expect(userNameCheck).toHaveBeenCalledWith(mockPage, userName);
             expect(getNumberBooks).toHaveBeenCalledWith(mockPage);
-            expect(scrollToBottom).toHaveBeenCalledWith(mockPage, 10);
+            expect(scrollToBottom).toHaveBeenCalledWith(mockPage, 2);
             expect(getBooksData).toHaveBeenCalledWith(mockPage);
+            expect(mockPage.close).toBeCalled();
         });
 
         it('should throw an error when the page cannot be loaded', async () => {
             const userID = '123';
             const userName = 'testuser';
+            const error = new Error('False User ID');
 
-            // Mock the necessary functions
-            const { getNumberBooks } = require('../scrape/scrapeHelperFuncs');
-            getNumberBooks.mockResolvedValue(0);
+            (userNameCheck as jest.Mock).mockRejectedValueOnce(error);
 
             // Call the function and expect it to throw an error
             await expect(getBookList(userID, userName)).rejects.toThrow('Could not load page');
+
         });
 
         it('should return an empty list when numberBooks is 0', async () => {
             const userID = '123';
             const userName = 'testuser';
 
-            // Mock the necessary functions
-            const { getNumberBooks } = require('../scrape/scrapeHelperFuncs');
-            getNumberBooks.mockResolvedValue(0);
+            getNumberBooksMock.mockResolvedValueOnce(0)
+
 
             // Call the function and expect it to return an empty list
             const result = await getBookList(userID, userName);

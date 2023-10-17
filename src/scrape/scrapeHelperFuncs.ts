@@ -5,7 +5,7 @@ import  {Page} from "puppeteer";
  * @param page puppeteer page
  * @param numberBooks number of books in the shelf
  */
-export const scrollToBottom = async (page: Page, numberBooks: number) =>{
+export async function scrollToBottom(page: Page, numberBooks: number) : Promise<void>{
     while (true) {
         const numberOfElements = await page.evaluate(() => {
             return document.querySelectorAll('#booksBody > tr').length;
@@ -20,7 +20,7 @@ export const scrollToBottom = async (page: Page, numberBooks: number) =>{
  * Gets the number of books in the shelf
  * @param page puppeteer page
  */
-export const getNumberBooks = async(page: Page) =>{
+export async function getNumberBooks(page: Page) :Promise<number | null>{
     return await page.$eval('.userShelf:nth-of-type(3)', element => {
         if(element && element.textContent){
             const match = element.textContent.match(/(\d+)/);
@@ -29,13 +29,13 @@ export const getNumberBooks = async(page: Page) =>{
         else{
             throw Error("No books number found in scraped page.")
         }
-})};
+})}
 
 /**
  * Gets the list of books in the shelf with title, author, isbn, isbn13
  * @param page
  */
-export const getBooksData=  async (page: Page): Promise<any[][]> => {
+export async function getBooksData(page: Page): Promise<any[][]>{
     return await page.evaluate(() => {
         let titles: any[] = [];
         let authors: any[] = [];
@@ -84,10 +84,10 @@ export const getBooksData=  async (page: Page): Promise<any[][]> => {
  * @param page puppeteer page
  * @param userName username
  */
-export const userNameCheck = async (page: Page, userName: string) =>{
+export async function userNameCheck(page: Page, userName: string): Promise<void>{
     const scrapedUsername = await page.$eval("#header > h1 > a:nth-child(2)", element => {
         console.log(element.textContent)
-        return element.textContent
+        return  element.textContent
     })
     if(!(scrapedUsername  && userName.includes(scrapedUsername))){
         throw Error("False UserID")
