@@ -1,6 +1,6 @@
 import { Page } from 'puppeteer';
-import { loadPuppeteerPage } from '../utils';
 import dotenv from 'dotenv';
+import {loadPuppeteerPage} from "../scrapeBooksHelpers";
 
 
 dotenv.config();

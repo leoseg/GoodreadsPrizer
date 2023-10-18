@@ -1,9 +1,8 @@
 import axios from "axios";
 import * as cheerio from 'cheerio';
-import {scrollToBottom, getNumberBooks, getBooksData, userNameCheck} from "./scrapeBooksHelpers";
+import {scrollToBottom, getNumberBooks, getBooksData, userNameCheck, loadPuppeteerPage} from "./scrapeBooksHelpers";
 import dotenv from 'dotenv';
 import {userAgents} from "./scrapeBooksConfigs";
-import {loadPuppeteerPage} from "../utils";
 dotenv.config();
 /**
  * Gets the number of books in the shelf

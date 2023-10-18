@@ -1,4 +1,5 @@
-import  {Page} from "puppeteer";
+import puppeteer, {Page} from "puppeteer";
+import {minimal_args, userAgents} from "./scrapeBooksConfigs";
 
 /**
  * Scrolls to the bottom of the page
@@ -92,4 +93,37 @@ export async function userNameCheck(page: Page, userName: string): Promise<void>
     if(!(scrapedUsername  && userName.includes(scrapedUsername))){
         throw Error("False UserID")
     }
+}
+
+/**
+ * Loads a puppeteer page with the given url
+ * @param url url to load
+ */
+export async function loadPuppeteerPage(url: string): Promise<Page> {
+    console.time("loadbrowser");
+    const browser = await puppeteer.launch({
+        headless: "new",
+        args: minimal_args,
+        defaultViewport: {
+            width: 1280,
+            height: 1500
+        }
+    });
+    const page = await browser.newPage();
+    console.timeEnd("loadbrowser")
+    await page.setRequestInterception(true);
+    console.time("loadPage")
+    page.on('request', (request) => {
+        if (['image', 'font', "stylesheet"].indexOf(request.resourceType()) !== -1) {
+            request.abort();
+        } else {
+            request.continue();
+        }
+    });
+    await page.setUserAgent(userAgents[Math.floor(Math.random() * userAgents.length)]);
+    await page.goto(url, {waitUntil: 'domcontentloaded'});
+
+
+    console.timeEnd("loadPage")
+    return page;
 }
