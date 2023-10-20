@@ -1,5 +1,6 @@
 import puppeteer, {Page} from "puppeteer";
 import {minimal_args, userAgents} from "./scrapeBooksConfigs";
+import {BookGoodRead} from "../../entity/bookGoodRead";
 
 /**
  * Scrolls to the bottom of the page
@@ -33,20 +34,23 @@ export async function getNumberBooks(page: Page) :Promise<number | null>{
 })}
 
 /**
- * Gets the list of books in the shelf with title, author, isbn, isbn13
+ * Gets the list of books in the shelf with title, author, isbn, isbn13, number of pages and link
  * @param page
  */
-export async function getBooksData(page: Page): Promise<any[][]>{
+export async function getBooksData(page: Page): Promise<BookGoodRead[]>{
     return await page.evaluate(() => {
         let titles: any[] = [];
         let authors: any[] = [];
         let isbns: any[] = [];
         let isbn13s: any[] = [];
+        let numPagesList: any[] = [];
+        let bookUrls: any[] = [];
         const bookElements = document.querySelectorAll('#booksBody > tr');
         bookElements.forEach(element => {
             const titleElement = element.querySelector('.field.title a');
             if (titleElement) {
                 titles.push(titleElement.getAttribute('title'));
+                bookUrls.push(titleElement.getAttribute('href'));
             } else {
                 return
             }
@@ -74,9 +78,26 @@ export async function getBooksData(page: Page): Promise<any[][]>{
                     isbn13s.push("Unknown")
                 }
             }
+            const numPages: Element|null = element.querySelector('.field.num_pages nobr');
+            if(numPages) {
+                if (numPages.textContent) {
+                    numPagesList.push(numPages.textContent.trim())
+                }
+            }
+
+
         });
 
-        return titles.map((title, index) => [title, authors[index], isbns[index], isbn13s[index]]);
+        return titles.map((title, index) => {
+            let bookGoodRead = new BookGoodRead();
+            bookGoodRead.title = title;
+            bookGoodRead.author = authors[index];
+            bookGoodRead.isbn = isbns[index];
+            bookGoodRead.isbn13 = isbn13s[index];
+            bookGoodRead.numPages = numPagesList[index];
+            bookGoodRead.url = bookUrls[index];
+            return bookGoodRead
+        });
     });
 
 }

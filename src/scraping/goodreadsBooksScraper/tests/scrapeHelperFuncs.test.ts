@@ -7,13 +7,16 @@ dotenv.config();
 describe('utils', () => {
     let page: Page;
     let url: string
+    let expectedUrl: string
 
     beforeAll(async () => {
         const userID = process.env.GOODREADS_USERID;
         const userName = process.env.GOODREADS_USERNAME;
         url = `https://www.goodreads.com/review/list/${userID}-${userName}?shelf=to-read`;
         page = await loadPuppeteerPage(url);
-
+        // @ts-ignore
+        const userNametransformed = userName.replace(/\s+/g, '-').toLowerCase();
+        expectedUrl = `https://www.goodreads.com/review/list/${userID}-${userNametransformed}?shelf=to-read`;
     });
 
     afterAll(async () => {
@@ -27,7 +30,7 @@ describe('utils', () => {
 
         it('should have the correct URL', async () => {
             const currentUrl = await page.url();
-            expect(currentUrl).toBe(url);
+            expect(currentUrl).toBe(expectedUrl);
         },10000);
 
     });

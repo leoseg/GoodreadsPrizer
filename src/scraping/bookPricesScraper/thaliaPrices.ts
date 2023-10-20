@@ -1,36 +1,37 @@
-import axios from "axios";
-import {userAgents} from "../goodreadsBooksScraper/scrapeBooksConfigs";
 import * as cheerio from 'cheerio';
 import {StorePrices} from "./bookPricer";
-class ThaliaPrices implements StorePrices{
+import {axiosGet} from "../../utils";
+import {BookStoreItem} from "../../entity/bookStoreItem";
+import {BookGoodRead} from "../../entity/bookGoodRead";
+
+/**
+ * Implementation of the StorePrices interface for the Thalia store
+ */
+export class ThaliaPrices implements StorePrices{
 
     storeTag: string = "Thalia"
     searchUrl = "https://www.thalia.de/suche?sq=";
-    async getStoreSearchResult(bookData: Array<string>): Promise<any> {
+    storeItemMapping: Map<string,string> = new Map<string,string>([
+        ["Gebundenes Buch","price"],
+        ["eBook","priceEbook"],
+        ["Taschenbuch","pricePaperback"]
+        ]);
+    storeBaseUrl: string = "https://www.thalia.de"
+
+    async getStoreSearchResult(bookData: BookGoodRead): Promise<any> {
         const url = this.searchUrl + this.getStoreSearchParams(bookData)
-        return axios.get(url,
-            {
-                headers : {"User-Agent": userAgents[Math.floor(Math.random() * userAgents.length)]}
-            })
-            .then(response => {
-                return response.data
-            })
-            .catch(error => {
-                console.log(error)
-            })
+        return axiosGet(url);
     }
 
-
-    getStoreSearchParams(bookData: Array<string>): string {
-        const [author, title, isbn, isbn13] = bookData;
-        if(isbn13 != ""){
-            return isbn13
+    getStoreSearchParams(bookData: BookGoodRead): string {
+        if(bookData.isbn13 != ""){
+            return bookData.isbn13
         }
-        if(isbn != ""){
-            return isbn
+        if(bookData.isbn != ""){
+            return bookData.isbn
         }
-        let author_param =author.split(',').reverse().join('+');
-        return title + "+" + author_param;
+        let author_param =bookData.author.split(',').reverse().join('+');
+        return bookData.title.split(" ").join("+") + "+" + author_param;
     }
 
     getStoreBookUrl(searchResponseData: any,bookName:string):string{
@@ -44,25 +45,28 @@ class ThaliaPrices implements StorePrices{
             }
         });
         if(link){
-            return link;
+            return this.storeBaseUrl+link;
         }else{
             throw new Error("No book found in scraped page.");
         }
 
     }
 
-
-    getStoreBookData(searchResponseData:any){
+    getStoreBookData(searchResponseData:any,url:string) :BookStoreItem{
         const $ = cheerio.load(searchResponseData);
-        let bookData : {[index: string]:any} = {}
-
+        let bookData : BookStoreItem = new BookStoreItem();
+        let self = this
         $(".element-struktur-kachel-standard.hauptformat").each(function() {
             const caption = $(this).attr('caption');
-            if(caption && bookData.hasOwnProperty(caption.replace(/\s/g, ''))){
-                bookData[caption] = $(this).find('strong.element-text-small-strong').text().trim();
+            if (caption && self.storeItemMapping.has(caption)) {
+                const mappedValue = self.storeItemMapping.get(caption) as "price" | "priceEbook" | "pricePaperback";
+                if(mappedValue) {
+                    bookData[mappedValue] = $(this).find('strong.element-text-small-strong').text().replace(/\s+/g, ' ').trim()
+                }
             }
         });
-
+        bookData.url = url
+        bookData.storeID = url.split("/").pop() as string
         return bookData
     }
 

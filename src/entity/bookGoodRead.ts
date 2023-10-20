@@ -33,7 +33,7 @@ export class BookGoodRead {
     numPages!: number;
 
     @OneToMany(() => BookStoreItem, (storeItem) => storeItem.bookGoodRead)
-    storeItems!: BookStoreItem[];
+    storeItems: BookStoreItem[] = [];
 
     @ManyToMany(() => User, (user) => user.booksGoodRead)
     @JoinTable()

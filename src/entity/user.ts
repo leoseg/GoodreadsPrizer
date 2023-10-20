@@ -13,5 +13,5 @@ export class User {
     goodreadsID!: string;
 
     @ManyToMany(() => BookGoodRead, (bookGoodRead) => bookGoodRead.users)
-    booksGoodRead!: BookGoodRead[];
+    booksGoodRead: BookGoodRead[] = [];
 }

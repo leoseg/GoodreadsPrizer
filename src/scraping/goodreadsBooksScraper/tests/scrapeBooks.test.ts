@@ -33,9 +33,11 @@ describe('scrapeBooks', () => {
 
             const number = await getNumberOfBooks(userID, userName);
 
+            let userNameTransformed = userName.replace(/\s+/g, '-').toLowerCase();
+
             expect(number).toBe(expectedNumber);
             expect(mockedAxios.get).toHaveBeenCalledWith(
-                `https://www.goodreads.com/review/list/${userID}-${userName}?shelf=currently-reading`,
+                `https://www.goodreads.com/review/list/${userID}-${userNameTransformed}?shelf=currently-reading`,
                 expect.any(Object)
             );
         });

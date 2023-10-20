@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import {scrollToBottom, getNumberBooks, getBooksData, userNameCheck, loadPuppeteerPage} from "./scrapeBooksHelpers";
 import dotenv from 'dotenv';
 import {userAgents} from "./scrapeBooksConfigs";
+import {BookGoodRead} from "../../entity/bookGoodRead";
 dotenv.config();
 /**
  * Gets the number of books in the shelf
@@ -37,8 +38,9 @@ const getNumberOfBooks = async (userID: string, userName: string): Promise<numbe
  * @param userID goodreads user id
  * @param userName goodreads user name
  */
-const getBookList = async (userID: string, userName: string): Promise<Array<Array<string>>> => {
-    const url = `https://www.goodreads.com/review/list/${userID}-${userName}?shelf=to-read`;
+const getBookList = async (userID: string, userName: string): Promise<Array<BookGoodRead>> => {
+    let transformedUserName = userName.replace(/\s+/g, '-').toLowerCase();
+    const url = `https://www.goodreads.com/review/list/${userID}-${transformedUserName}?shelf=to-read`;
     console.log(url)
     try {
         const page = await loadPuppeteerPage(url)

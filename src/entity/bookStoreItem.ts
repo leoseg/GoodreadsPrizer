@@ -21,14 +21,14 @@ export class BookStoreItem {
     @Column()
     storeTag!: string
 
-    @Column({ type: 'float' })
-    priceEbook!: number;
+    @Column()
+    priceEbook!: string;
 
-    @Column({ type: 'float' })
-    price!: number;
+    @Column()
+    price!: string;
 
-    @Column({ type: 'float' })
-    pricePaperback!: number;
+    @Column()
+    pricePaperback!: string;
 
     @ManyToOne(() => BookGoodRead, (bookGoodRead) => bookGoodRead.storeItems)
     bookGoodRead!: BookGoodRead;
