@@ -58,9 +58,9 @@ export class BookPricer {
 
         const storeSearchResults = await Promise.all(bookList.map(bookData => this.storePricesImpl.getStoreSearchResult(bookData)));
 
-        const urls = storeSearchResults.map((searchResponseData, index) => {
+        const urls = storeSearchResults.map((searchResponse, index) => {
             const bookName = bookList[index].title;
-            return this.storePricesImpl.getStoreBookUrl(searchResponseData, bookName);
+            return this.storePricesImpl.getStoreBookUrl(searchResponse.data, bookName);
         })
 
         const bookPages= await Promise.all(urls.map(url => axiosGet(url)));
