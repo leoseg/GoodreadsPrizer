@@ -14,32 +14,32 @@ describe("ThaliaPrices", () => {
         jest.clearAllMocks();
     });
     describe("getStoreSearchParams", () => {
-        it("should return isbn13 if it is provided", () => {
+        // it("should return isbn13 if it is provided", () => {
+        //     const bookData = new BookGoodRead();
+        //     bookData.author = "testauthor";
+        //     bookData.title = "testtitle";
+        //     bookData.isbn = "testisbn";
+        //     bookData.isbn13 = "testisbn13";
+        //     const expected = "testisbn13";
+        //     const result = thaliaPricesTestClass.getStoreSearchParams(bookData);
+        //     expect(result).toBe(expected);
+        // });
+        // it("should return isbn if it is provided", () => {
+        //     const bookData = new BookGoodRead();
+        //     bookData.author = "testauthor";
+        //     bookData.title = "testtitle";
+        //     bookData.isbn = "testisbn";
+        //     bookData.isbn13 = "";
+        //     const expected = "testisbn";
+        //     const result = thaliaPricesTestClass.getStoreSearchParams(bookData);
+        //     expect(result).toBe(expected);
+        // });
+        it("should return title + author", () => {
             const bookData = new BookGoodRead();
             bookData.author = "testauthor";
             bookData.title = "testtitle";
-            bookData.isbn = "testisbn";
-            bookData.isbn13 = "testisbn13";
-            const expected = "testisbn13";
-            const result = thaliaPricesTestClass.getStoreSearchParams(bookData);
-            expect(result).toBe(expected);
-        });
-        it("should return isbn if it is provided", () => {
-            const bookData = new BookGoodRead();
-            bookData.author = "testauthor";
-            bookData.title = "testtitle";
-            bookData.isbn = "testisbn";
-            bookData.isbn13 = "";
-            const expected = "testisbn";
-            const result = thaliaPricesTestClass.getStoreSearchParams(bookData);
-            expect(result).toBe(expected);
-        });
-        it("should return title + author if isbn and isbn13 are not provided", () => {
-            const bookData = new BookGoodRead();
-            bookData.author = "testauthor";
-            bookData.title = "testtitle";
-            bookData.isbn = "";
-            bookData.isbn13 = "";
+            bookData.isbn = "isbn";
+            bookData.isbn13 = "isbn13";
             const expected = "testtitle+testauthor";
             const result = thaliaPricesTestClass.getStoreSearchParams(bookData);
             expect(result).toBe(expected);

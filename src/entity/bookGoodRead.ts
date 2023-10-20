@@ -4,12 +4,13 @@ import {
     Column,
     OneToMany,
     ManyToMany,
-    JoinTable
+    JoinTable, Index
 } from 'typeorm';
 import {BookStoreItem} from "./bookStoreItem";
 import {User} from "./user";
 
 @Entity()
+@Index('unique_index', ['title', 'author'], { unique: true })
 export class BookGoodRead {
     @PrimaryGeneratedColumn()
     id!: number;

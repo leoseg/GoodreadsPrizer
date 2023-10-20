@@ -1,5 +1,6 @@
 import {axiosGet} from "../../utils";
 import {BookGoodRead} from "../../entity/bookGoodRead";
+import {BookStoreItem} from "../../entity/bookStoreItem";
 
 /**
  * Interface for the store prices
@@ -65,7 +66,10 @@ export class BookPricer {
 
         const bookPages= await Promise.all(urls.map(url => axiosGet(url)));
 
-        return bookPages.map((page,index) => this.storePricesImpl.getStoreBookData(page.data,urls[index]));
+        return bookPages.map((page,index) => {
+            let bookItem : BookStoreItem = this.storePricesImpl.getStoreBookData(page.data,urls[index])
+            bookItem.bookGoodRead = bookList[index]
+        });
 
     }
 }

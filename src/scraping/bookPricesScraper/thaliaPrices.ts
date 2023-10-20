@@ -24,12 +24,12 @@ export class ThaliaPrices implements StorePrices{
     }
 
     getStoreSearchParams(bookData: BookGoodRead): string {
-        if(bookData.isbn13 != ""){
-            return bookData.isbn13
-        }
-        if(bookData.isbn != ""){
-            return bookData.isbn
-        }
+        // if(bookData.isbn13 != ""){
+        //     return bookData.isbn13
+        // }
+        // if(bookData.isbn != ""){
+        //     return bookData.isbn
+        // }
         let author_param =bookData.author.split(',').reverse().join('+');
         return bookData.title.split(" ").join("+") + "+" + author_param;
     }
@@ -65,8 +65,8 @@ export class ThaliaPrices implements StorePrices{
                 }
             }
         });
-        bookData.url = url
         bookData.storeID = url.split("/").pop() as string
+        bookData.url = url
         return bookData
     }
 
