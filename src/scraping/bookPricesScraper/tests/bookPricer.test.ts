@@ -1,8 +1,9 @@
-import { BookPricer ,StorePrices} from "../bookPricer";
+import {BookPricer, StorePrices, StoreTag} from "../bookPricer";
 import { BookGoodRead } from "../../../entity/bookGoodRead";
-import axios from "axios";
 import {ThaliaPrices} from "../thaliaPrices";
 import {axiosGet} from "../../../utils";
+import {Container} from "typedi";
+import {testBooks} from "./testdata";
 
 // Mock the dependencies
 jest.mock("../thaliaPrices");
@@ -10,19 +11,39 @@ jest.mock("../../../entity/bookGoodRead")
 jest.mock("axios");
 jest.mock("../../../utils");
 let mockStorePrices = new ThaliaPrices() as jest.Mocked<StorePrices>;
-
+Container.set(StoreTag.Thalia,mockStorePrices)
 
 describe("BookPricer", () => {
     let bookPricer: BookPricer;
 
     beforeEach(() => {
         // Create an instance of BookPricer with the mock StorePrices
-        bookPricer = new BookPricer(mockStorePrices);
+        bookPricer = new BookPricer();
     });
 
     afterEach(() => {
         // Restore the original implementations
         jest.restoreAllMocks();
+    });
+
+    describe('getBookPricesListForAllStores', () => {
+        it('should call getBookPriceList with the correct values', async () => {
+            // Create mock book list
+            const bookList: BookGoodRead[] =  testBooks
+
+            const getBookPriceListSpy = jest.spyOn(bookPricer, 'getBookPriceList').mockImplementation(() => {
+                return Promise.resolve(bookList[1].storeItems);
+            });
+
+            await bookPricer.getBookPricesListForAllStores(bookList);
+
+            // Assert that getBookPriceList was called with the correct values
+            expect(getBookPriceListSpy).toHaveBeenCalledTimes(Object.values(StoreTag).length);
+            expect(getBookPriceListSpy).toHaveBeenCalledWith(
+                expect.arrayContaining(bookList.filter(book => book.storeItems.filter(storeItem => storeItem.storeTag ==="Thalia").length === 0)),
+                expect.any(ThaliaPrices)
+            );
+        });
     });
 
     it("should get the book price list", async () => {
@@ -51,7 +72,7 @@ describe("BookPricer", () => {
         // Create a mock book list
         // Call the getBookPriceList method
         let mockBookList = [book1,book2]
-        const bookPriceList = await bookPricer.getBookPriceList(mockBookList);
+        const bookPriceList = await bookPricer.getBookPriceList(mockBookList,mockStorePrices);
 
         // Assert that the mocked functions were called with the correct parameters
         expect(mockStorePrices.getStoreSearchResult).toHaveBeenCalledTimes(2);

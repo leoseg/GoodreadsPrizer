@@ -1,3 +1,5 @@
+import {BookGoodRead} from "../../../entity/bookGoodRead";
+
 export const thaliaSearchResult:string = "<ul class=\"tm-produktliste\">\n" +
 "                <li class=\"tm-produktliste__eintrag artikel\" data-productpage=\"1\" product-position=\"1\">\n" +
 "                    <a class=\"element-link-toplevel tm-produkt-link\" href=\"/shop/home/artikeldetails/A1063536722\" caption=\"suchergebnis-klick\">\n" +
@@ -298,3 +300,94 @@ export const thaliaBookPage:string = "<div class=\"formatkacheln scrollbar-verst
     "                        \n" +
     "                                                </a>\n" +
     "                                    </div>"
+export var testBooks :BookGoodRead[] = [
+    {
+        id: 1,
+        author: 'Author 1',
+        title: 'Book 1',
+        isbn: '1234567890',
+        isbn13: '9781234567890',
+        url: 'https://example.com/book1',
+        numPages: 200,
+        storeItems: [],
+        users: [],
+    },
+    {
+        id: 2,
+        author: 'Author 2',
+        title: 'Book 2',
+        isbn: '0987654321',
+        isbn13: '9780987654321',
+        url: 'https://example.com/book2',
+        numPages: 300,
+        storeItems: [],
+        users: [],
+    },
+    {
+        id: 3,
+        author: 'Author 3',
+        title: 'Book 3',
+        isbn: '5432109876',
+        isbn13: '9785432109876',
+        url: 'https://example.com/book3',
+        numPages: 400,
+        storeItems: [],
+        users: [],
+    },
+];
+
+testBooks[0].storeItems = [ {
+    id: 1,
+    author: 'Author 1',
+    title: 'Book 1',
+    storeID: 'store1',
+    url: 'https://example.com/book1/store1',
+    storeTag: 'test1',
+    priceEbook: '9.99',
+    price: '19.99',
+    pricePaperback: '29.99',
+    bookGoodRead: testBooks[0]
+},
+    {
+        id: 2,
+        author: 'Author 1',
+        title: 'Book 1',
+        storeID: 'store2',
+        url: 'https://example.com/book1/store2',
+        storeTag: 'test',
+        priceEbook: '9.99',
+        price: '19.99',
+        pricePaperback: '29.99',
+        bookGoodRead: testBooks[0],
+    },
+
+]
+
+testBooks[1].storeItems = [
+    {
+        id: 3,
+        author: 'Author 2',
+        title: 'Book 2',
+        storeID: 'store1',
+        url: 'https://example.com/book2/store1',
+        storeTag: 'Thalia',
+        priceEbook: '9.99',
+        price: '19.99',
+        pricePaperback: '29.99',
+        bookGoodRead: testBooks[1],
+    },
+    {
+        id: 4,
+        author: 'Author 2',
+        title: 'Book 2',
+        storeID: 'store2',
+        url: 'https://example.com/book2/store2',
+        storeTag: 'test',
+        priceEbook: '9.99',
+        price: '19.99',
+        pricePaperback: '29.99',
+        bookGoodRead: testBooks[1],
+    },
+]
+// Use the bookList in your test case
+// ...

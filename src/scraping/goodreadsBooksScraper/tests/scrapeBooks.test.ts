@@ -2,8 +2,8 @@ import { getNumberOfBooks, getBookList } from "../scrapeBooks";
 import axios from 'axios';
 import {getNumberBooks, userNameCheck, getBooksData, scrollToBottom, loadPuppeteerPage} from "../scrapeBooksHelpers";
 jest.mock('axios');
-jest.mock('../goodreadsBooksScraper/scrapeHelperFuncs');
-jest.mock("../utils");
+jest.mock('../scrapeBooksHelpers');
+jest.mock('../../../utils');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 axios.get = jest.fn()
 

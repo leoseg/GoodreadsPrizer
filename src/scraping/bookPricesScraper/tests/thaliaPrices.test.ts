@@ -72,6 +72,7 @@ describe("ThaliaPrices", () => {
             expectedBookData.priceEbook= "10,99 €";
             expectedBookData.url = "https://www.thalia.de/shop/home/artikeldetails/A1063536722";
             expectedBookData.storeID="A1063536722";
+            expectedBookData.storeTag ="Thalia";
             expect(bookData).toEqual(expectedBookData);
         });
     });

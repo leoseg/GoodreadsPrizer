@@ -1,13 +1,19 @@
 import {axiosGet} from "../../utils";
 import {BookGoodRead} from "../../entity/bookGoodRead";
 import {BookStoreItem} from "../../entity/bookStoreItem";
+import {Container, Service} from "typedi";
+
+
+export enum StoreTag {
+    Thalia = "Thalia",
+}
 
 /**
  * Interface for the store prices
  */
 export interface StorePrices {
 
-    storeTag: string;
+    storeTag: StoreTag;
 
     searchUrl: string;
 
@@ -44,32 +50,48 @@ export interface StorePrices {
 /**
  * Class for the book pricer gets prices from a store, store type is defined by the storePricesImpl attribute
  */
+@Service()
 export class BookPricer {
 
-    private storePricesImpl:StorePrices;
-    constructor(private storePrices:StorePrices) {
-        this.storePricesImpl = storePrices;
-    }
 
     /**
-     * Returns the book price list
+     * Scrapes the book prices for all stores where there is not already an element in the
+     * bookStoreItem table
      * @param bookList list of books to get the prices for
      */
-    public async getBookPriceList(bookList:Array<BookGoodRead>){
+    public async getBookPricesListForAllStores(bookList:Array<BookGoodRead>) : Promise<Array<BookStoreItem>>{
+        const values = Object.values(StoreTag);
+        const prices:Array<Array<BookStoreItem>>   =await Promise.all(values.map(async value => {
+            return await this.getBookPriceList(bookList.filter(
+                book => book.storeItems.filter(storeItem => storeItem.storeTag === value).length === 0
+            ),Container.get(value));
+        }))
+        return prices.flat();
+    }
+    /**
+     * Get the book price list
+     * @param bookList list of books to get the prices for
+     * @param storePricesImpl storePrices implementation
+     */
+    public async getBookPriceList(bookList:Array<BookGoodRead>,storePricesImpl:StorePrices){
 
-        const storeSearchResults = await Promise.all(bookList.map(bookData => this.storePricesImpl.getStoreSearchResult(bookData)));
+        const storeSearchResults = await Promise.all(bookList.map(bookData => storePricesImpl.getStoreSearchResult(bookData)));
 
         const urls = storeSearchResults.map((searchResponse, index) => {
             const bookName = bookList[index].title;
-            return this.storePricesImpl.getStoreBookUrl(searchResponse.data, bookName);
+            return storePricesImpl.getStoreBookUrl(searchResponse.data, bookName);
         })
 
         const bookPages= await Promise.all(urls.map(url => axiosGet(url)));
 
         return bookPages.map((page,index) => {
-            let bookItem : BookStoreItem = this.storePricesImpl.getStoreBookData(page.data,urls[index])
+            let bookItem : BookStoreItem = storePricesImpl.getStoreBookData(page.data,urls[index])
             bookItem.bookGoodRead = bookList[index]
+            return bookItem
         });
-
     }
+
+
+
+
 }

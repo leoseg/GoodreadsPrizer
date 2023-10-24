@@ -1,15 +1,17 @@
 import * as cheerio from 'cheerio';
-import {StorePrices} from "./bookPricer";
+import {StorePrices, StoreTag} from "./bookPricer";
 import {axiosGet} from "../../utils";
 import {BookStoreItem} from "../../entity/bookStoreItem";
 import {BookGoodRead} from "../../entity/bookGoodRead";
+import {Service} from "typedi";
 
 /**
  * Implementation of the StorePrices interface for the Thalia store
  */
+@Service(StoreTag.Thalia)
 export class ThaliaPrices implements StorePrices{
 
-    storeTag: string = "Thalia"
+    storeTag: StoreTag = StoreTag.Thalia
     searchUrl = "https://www.thalia.de/suche?sq=";
     storeItemMapping: Map<string,string> = new Map<string,string>([
         ["Gebundenes Buch","price"],
@@ -24,12 +26,6 @@ export class ThaliaPrices implements StorePrices{
     }
 
     getStoreSearchParams(bookData: BookGoodRead): string {
-        // if(bookData.isbn13 != ""){
-        //     return bookData.isbn13
-        // }
-        // if(bookData.isbn != ""){
-        //     return bookData.isbn
-        // }
         let author_param =bookData.author.split(',').reverse().join('+');
         return bookData.title.split(" ").join("+") + "+" + author_param;
     }
@@ -67,6 +63,7 @@ export class ThaliaPrices implements StorePrices{
         });
         bookData.storeID = url.split("/").pop() as string
         bookData.url = url
+        bookData.storeTag = this.storeTag
         return bookData
     }
 

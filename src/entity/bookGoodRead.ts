@@ -36,7 +36,7 @@ export class BookGoodRead {
     @OneToMany(() => BookStoreItem, (storeItem) => storeItem.bookGoodRead)
     storeItems: BookStoreItem[] = [];
 
-    @ManyToMany(() => User, (user) => user.booksGoodRead)
+    @ManyToMany(() => User, (user) => user.booksGoodRead, { cascade: true })
     @JoinTable()
     users!: User[];
 }

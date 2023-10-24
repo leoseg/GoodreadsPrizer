@@ -11,13 +11,13 @@
     "outDir": "build",
     "rootDir": "src",
     "strict": true,
-    "noImplicitAny": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noImplicitAny": false
   },
   "exclude": ["node_modules"],
   "include": ["src"]
