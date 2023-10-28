@@ -6,6 +6,6 @@ export const userRouter = Router()
 const userController = Container.get(UserController)
 
 //
-userRouter.post("/user",userController.save)
+userRouter.post("/user",userController.update)
 userRouter.delete("/user/:id",userController.remove)
 userRouter.get("/user/:id", userController.one)

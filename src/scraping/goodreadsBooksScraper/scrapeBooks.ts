@@ -4,7 +4,8 @@ import {scrollToBottom, getNumberBooks, getBooksData, userNameCheck, loadPuppete
 import dotenv from 'dotenv';
 import {userAgents} from "./scrapeBooksConfigs";
 import {BookGoodRead} from "../../entity/bookGoodRead";
-dotenv.config();
+import {User} from "../../entity/user";
+dotenv.config({ path: __dirname + `/../../.env.${process.env.NODE_ENV}` });
 /**
  * Gets the number of books in the shelf
  * @param userID goodreads user id
@@ -35,16 +36,15 @@ const getNumberOfBooks = async (userID: string, userName: string): Promise<numbe
 }
 /**
  * Gets the list of books in the shelf with author and title
- * @param userID goodreads user id
- * @param userName goodreads user name
+ * @param user user to get the book list for
  */
-const getBookList = async (userID: string, userName: string): Promise<Array<BookGoodRead>> => {
-    let transformedUserName = userName.replace(/\s+/g, '-').toLowerCase();
-    const url = `https://www.goodreads.com/review/list/${userID}-${transformedUserName}?shelf=to-read`;
+const getBookList = async (user: User): Promise<Array<BookGoodRead>> => {
+    let transformedUserName = user.goodreadsName.replace(/\s+/g, '-').toLowerCase();
+    const url = `https://www.goodreads.com/review/list/${user.goodreadsID}-${transformedUserName}?shelf=to-read`;
     console.log(url)
     try {
         const page = await loadPuppeteerPage(url)
-        await userNameCheck(page, userName)
+        await userNameCheck(page, user.goodreadsName)
         console.time("scroll")
         const numberBooks = await getNumberBooks(page)
         if(numberBooks == 0){
@@ -56,7 +56,7 @@ const getBookList = async (userID: string, userName: string): Promise<Array<Book
 
         console.timeEnd("scroll")
 
-        const booksData = await getBooksData(page)
+        const booksData = await getBooksData(page,user)
         await page.close();
         return booksData;
     } catch (error) {
@@ -68,7 +68,7 @@ const getBookList = async (userID: string, userName: string): Promise<Array<Book
 // const userID = process.env.GOODREADS_USERID;
 // const userName = process.env.GOODREADS_USERNAME;
 // if(userID == undefined || userName == undefined){
-//     throw Error("Goodreads user id or name not found in .env file")
+//     throw Error("Goodreads user id or name not found in .env.development file")
 // }else{
 //     getBookList(userID, userName).then(
 //         result => {

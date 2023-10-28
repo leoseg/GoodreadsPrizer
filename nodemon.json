@@ -2,5 +2,5 @@
     "watch": ["src"],
     "ext": ".js",
     "ignore": [],
-    "exec": "tsc && node build/scrape/scrapeBooks.js"
+    "exec": "set NODE_ENV=development && tsc && node build/index.js"
 }

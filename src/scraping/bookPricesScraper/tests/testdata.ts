@@ -302,7 +302,6 @@ export const thaliaBookPage:string = "<div class=\"formatkacheln scrollbar-verst
     "                                    </div>"
 export var testBooks :BookGoodRead[] = [
     {
-        id: 1,
         author: 'Author 1',
         title: 'Book 1',
         isbn: '1234567890',
@@ -313,7 +312,6 @@ export var testBooks :BookGoodRead[] = [
         users: [],
     },
     {
-        id: 2,
         author: 'Author 2',
         title: 'Book 2',
         isbn: '0987654321',
@@ -324,7 +322,6 @@ export var testBooks :BookGoodRead[] = [
         users: [],
     },
     {
-        id: 3,
         author: 'Author 3',
         title: 'Book 3',
         isbn: '5432109876',

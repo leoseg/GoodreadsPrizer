@@ -1,17 +1,15 @@
 import { Page } from 'puppeteer';
-import dotenv from 'dotenv';
 import {loadPuppeteerPage} from "../scrapeBooksHelpers";
-
-
-dotenv.config();
+const config =  require('../../../config');
 describe('utils', () => {
     let page: Page;
     let url: string
     let expectedUrl: string
 
     beforeAll(async () => {
-        const userID = process.env.GOODREADS_USERID;
-        const userName = process.env.GOODREADS_USERNAME;
+        const userID = config.GOODREADS_USERID;
+        const userName = config.GOODREADS_USERNAME;
+        console.log(userName)
         url = `https://www.goodreads.com/review/list/${userID}-${userName}?shelf=to-read`;
         page = await loadPuppeteerPage(url);
         // @ts-ignore

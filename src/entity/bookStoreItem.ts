@@ -32,4 +32,6 @@ export class BookStoreItem {
 
     @ManyToOne(() => BookGoodRead, (bookGoodRead) => bookGoodRead.storeItems)
     bookGoodRead!: BookGoodRead;
+
+
 }

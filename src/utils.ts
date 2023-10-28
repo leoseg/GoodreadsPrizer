@@ -30,3 +30,4 @@ export async function axiosGet(url:string):Promise<any>{
             console.log(error)
         })
 }
+

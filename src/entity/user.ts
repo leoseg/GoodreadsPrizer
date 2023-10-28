@@ -1,10 +1,11 @@
-import {Column, Entity, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import { Column, Entity, ManyToMany, PrimaryColumn} from "typeorm";
 import {BookGoodRead} from "./bookGoodRead";
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id!: number;
+
+    @PrimaryColumn("uuid")
+    id!: string;
 
     @Column()
     goodreadsName!: string;
@@ -12,6 +13,12 @@ export class User {
     @Column()
     goodreadsID!: string;
 
-    @ManyToMany(() => BookGoodRead, (bookGoodRead) => bookGoodRead.users)
-    booksGoodRead: BookGoodRead[] = [];
+    @ManyToMany(() => BookGoodRead, (bookGoodRead) => bookGoodRead.users,{cascade: ["insert","update"]}
+        )
+    booksGoodRead!: BookGoodRead[];
+
+    //
+    // @OneToMany(()=> BookStoreItem, (bookStoreItem) => bookStoreItem.bookGoodRead,{cascade: ["insert","update"]})
+    // storeItems!: BookStoreItem[];
+
 }

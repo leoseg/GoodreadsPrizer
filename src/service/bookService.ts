@@ -8,45 +8,57 @@ import {getBookList} from "../scraping/goodreadsBooksScraper/scrapeBooks";
 import {BookStoreItem} from "../entity/bookStoreItem";
 
 
+
 @Service()
 export class BookService{
 
-    private userRepository:Repository<User> = AppDataSource.getRepository(User)
+
     private bookGoodReadRepository:Repository<BookGoodRead> = AppDataSource.getRepository(BookGoodRead)
-    private bookStoreItemRepository:Repository<BookStoreItem> = AppDataSource.getRepository(BookStoreItem)
+    private userRepository:Repository<User> = AppDataSource.getRepository(User)
     private bookPricer: BookPricer = Container.get(BookPricer)
+    private bookStoreItemRepository:Repository<BookStoreItem> = AppDataSource.getRepository(BookStoreItem);
+
 
     /**
      * Update the book prices for a user
-     * @param userID id of the user to update the book prices for
+     * @param user of the user to update the book prices for
      */
-    async updateBookPricesForUser(userID:number){
-        const user = await this.userRepository.findOne({
-            where: { id: userID },relations:["booksGoodRead"]
-        });
-        if (user) {
-            var bookList = await getBookList(user.goodreadsID,user.goodreadsName)
-            bookList = bookList.map(book => {book.users.push(user); return book})
-            await this.bookGoodReadRepository.upsert(bookList,["uniqueIndex"])
-            const bookListWithPrices = await this.bookPricer.getBookPricesListForAllStores(
-                await this.bookGoodReadRepository.find(
-                {relations:["bookStoreItems"]},
-            ))
-            await this.bookStoreItemRepository.save(bookListWithPrices)
-        }
+    async updateBookPricesForUser(user:User){
+        // const user = await this.userRepository.findOne({
+        //     where: { id: userID },relations:["booksGoodRead"]
+        // });
+        var bookList = await getBookList(user)
+        // await this.bookGoodReadRepository.save(bookList)
+        // overwrite the old booklist
+        user.booksGoodRead = bookList
+        await this.userRepository.update(user.id, {booksGoodRead: bookList})
+        const bookListWithPrices = await this.bookPricer.getBookPricesListForAllStores(
+            await this.bookGoodReadRepository.find(
+            {where: { users: { id: user.id } },
+                relations:["bookStoreItems"]
+                },
+        ))
+        await this.bookStoreItemRepository.save(bookListWithPrices)
     }
 
     /**
      * Get all the BookStoreItem entries for a user
-     * @param userID id of the user to get the book entries for
+     * @param user user to get the book entries for
      * @param storeTag tag of the store to filter by
      */
-    async getBookstoreEntriesForUser(userID:number,storeTag?:string){
+    async getBookstoreEntriesForUser(user:User,storeTag?:string){
+        // const userWithBooks =  await this.userRepository.findOne(
+        //     {where: { id: user.id } ,relations:["storeItems"]}
+        // )
+        // if(storeTag){
+        //     return userWithBooks?.storeItems.filter(book => book.storeTag === storeTag)
+        // }
+        // return userWithBooks?.storeItems
         const query = this.bookStoreItemRepository
             .createQueryBuilder("entry")
             .innerJoin("entry.bookGoodRead", "book")
             .innerJoin("book.users", "user")
-            .where("user.id = :userId", { userID });
+            .where("user.id = :userID", { userID :user.id });
 
         // If a tag is provided, filter by it
         if (storeTag) {

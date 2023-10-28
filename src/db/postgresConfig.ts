@@ -1,17 +1,22 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
 import { User } from "../entity/user"
-
+import {BookGoodRead} from "../entity/bookGoodRead";
+import {BookStoreItem} from "../entity/bookStoreItem";
+const config = require("../config")
 export const AppDataSource = new DataSource({
     type: "postgres",
-    host: "localhost",
-    port: 5432,
-    username: "test",
-    password: "test",
-    database: "test",
+    host: config.DB_HOST,
+    port: parseInt(config.DB_PORT!),
+    username: config.DB_USER,
+    password: config.DB_PASSWORD,
+    database: config.DB_NAME,
     synchronize: true,
     logging: false,
-    entities: [User],
-    migrations: [],
+    entities: [User,BookGoodRead,BookStoreItem],
+    migrations: ["src/db/migration/*.ts"],
+    dropSchema: config.DROP_SCHEMA === "true",
+    migrationsRun: true,
     subscribers: [],
+
 })

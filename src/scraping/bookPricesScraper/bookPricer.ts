@@ -55,8 +55,7 @@ export class BookPricer {
 
 
     /**
-     * Scrapes the book prices for all stores where there is not already an element in the
-     * bookStoreItem table
+     * Returns the list of all prices if not allready present scrapes them
      * @param bookList list of books to get the prices for
      */
     public async getBookPricesListForAllStores(bookList:Array<BookGoodRead>) : Promise<Array<BookStoreItem>>{
@@ -66,7 +65,7 @@ export class BookPricer {
                 book => book.storeItems.filter(storeItem => storeItem.storeTag === value).length === 0
             ),Container.get(value));
         }))
-        return prices.flat();
+        return prices.flat().concat(bookList.flatMap(book => book.storeItems));
     }
     /**
      * Get the book price list

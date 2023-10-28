@@ -1,10 +1,9 @@
 import {
     Entity,
-    PrimaryGeneratedColumn,
     Column,
     OneToMany,
     ManyToMany,
-    JoinTable, Index
+    JoinTable, Index, PrimaryColumn
 } from 'typeorm';
 import {BookStoreItem} from "./bookStoreItem";
 import {User} from "./user";
@@ -12,13 +11,12 @@ import {User} from "./user";
 @Entity()
 @Index('unique_index', ['title', 'author'], { unique: true })
 export class BookGoodRead {
-    @PrimaryGeneratedColumn()
-    id!: number;
 
-    @Column()
+
+    @PrimaryColumn()
     author!: string;
 
-    @Column()
+    @PrimaryColumn()
     title!: string;
 
     @Column()
@@ -34,11 +32,13 @@ export class BookGoodRead {
     numPages!: number;
 
     @OneToMany(() => BookStoreItem, (storeItem) => storeItem.bookGoodRead)
-    storeItems: BookStoreItem[] = [];
+    storeItems!: BookStoreItem[] ;
 
-    @ManyToMany(() => User, (user) => user.booksGoodRead, { cascade: true })
+
+    @ManyToMany(() => User, (user) => user.booksGoodRead, )
     @JoinTable()
     users!: User[];
+
 }
 
 
