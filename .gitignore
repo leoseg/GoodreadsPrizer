@@ -12,7 +12,7 @@ pids
 logs
 results
 tmp
-
+*.pem
 # Build
 public/css/main.css
 build

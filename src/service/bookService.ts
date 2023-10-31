@@ -1,4 +1,4 @@
-import {Container,  Service} from "typedi";
+import {Container, Inject, Service} from "typedi";
 import {Repository} from "typeorm";
 import {GoodReadsUser} from "../entity/goodReadsUser";
 import {AppDataSource} from "../db/postgresConfig";
@@ -15,7 +15,6 @@ export class BookService{
 
     private bookGoodReadRepository:Repository<BookGoodRead> = AppDataSource.getRepository(BookGoodRead)
     private userRepository:Repository<GoodReadsUser> = AppDataSource.getRepository(GoodReadsUser)
-    private bookPricer: BookPricer = Container.get(config.PRICEALGORITHM as string)
     private bookStoreItemRepository:Repository<BookStoreItem> = AppDataSource.getRepository(BookStoreItem);
 
 
@@ -35,7 +34,8 @@ export class BookService{
                 relations:["storeItems"]
             },
         )
-        const bookListWithPrices = await this.bookPricer.scrapeBookPricesListForAllStores(
+        const bookPricer : BookPricer = Container.get(config.PRICEALGORITHM as string)
+        const bookListWithPrices = await bookPricer.scrapeBookPricesListForAllStores(
             bookList,booksFromDB
         )
         await this.updateBooksForUser(user,bookListWithPrices)

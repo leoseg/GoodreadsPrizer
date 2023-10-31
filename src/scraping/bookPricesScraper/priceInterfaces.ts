@@ -49,4 +49,6 @@ export interface BookPricer{
     scrapeBookPricesListForAllStores(bookList:Array<BookGoodRead>,booksFromDB:Array<BookGoodRead>) : Promise<Array<BookGoodRead>>
 
     updateStorePriceForBook(book:BookGoodRead,storePricesTag:string):Promise<BookGoodRead>
+
+
 }
