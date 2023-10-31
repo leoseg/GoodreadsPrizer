@@ -40,69 +40,65 @@ export async function getNumberBooks(page: Page) :Promise<number | null>{
  * @param user user to get the book list for
  */
 export async function getBooksData(page: Page,user:GoodReadsUser): Promise<BookGoodRead[]>{
+    var books: BookGoodRead[] = []
     return await page.evaluate(() => {
-        let titles: any[] = [];
-        let authors: any[] = [];
-        let isbns: any[] = [];
-        let isbn13s: any[] = [];
-        let numPagesList: any[] = [];
-        let bookUrls: any[] = [];
         const bookElements = document.querySelectorAll('#booksBody > tr');
         bookElements.forEach(element => {
+            var book = new BookGoodRead();
             const titleElement = element.querySelector('.field.title a');
             if (titleElement) {
-                titles.push(titleElement.getAttribute('title'));
-                bookUrls.push(titleElement.getAttribute('href'));
+                if(titleElement.getAttribute("title") != null){
+                    book.title = titleElement.getAttribute("title")!
+                }else{
+                    return;
+                }
+                if(titleElement.getAttribute("href") != null){
+                    book.url = titleElement.getAttribute("href")!
+                }else{
+                    return;
+                }
             } else {
                 return
             }
             const authorElement = element.querySelector('.field.author a');
             if (authorElement) {
                 if (authorElement.textContent) {
-                    authors.push(authorElement.textContent.trim());
+                    book.author = authorElement.textContent.trim();
                 } else {
-                    authors.push("Unknown")
+                    book.author = "Unknown"
                 }
             }
             const isbnElement = element.querySelector('.field.isbn div');
             if (isbnElement){
                 if(isbnElement.textContent){
-                    isbns.push(isbnElement.textContent.trim())
+                    book.isbn = isbnElement.textContent.trim()
                 }else {
-                    isbns.push("Unknown")
+                    book.isbn = "Unknown"
                 }
             }
             const isbn13Element = element.querySelector('.field.isbn13 div');
             if(isbn13Element){
                 if(isbn13Element.textContent){
-                    isbn13s.push(isbn13Element.textContent.trim())
+                    book.isbn13 = isbn13Element.textContent.trim()
                 }else {
-                    isbn13s.push("Unknown")
+                    book.isbn13 = "Unknown"
                 }
             }
             const numPages: Element|null = element.querySelector('.field.num_pages nobr');
             if(numPages) {
                 if (numPages.textContent) {
-                    numPagesList.push(numPages.textContent.trim())
+                    book.numPages = parseInt(numPages.textContent.trim())
                 }
             }
-
-
+            const position: Element|null = element.querySelector(".field.position .value input[type='text']")
+            if(position){
+                book.position = parseInt(position?.getAttribute("value") as string)
+            }
+            books.push(book)
         });
-
-        return titles.map((title, index) => {
-            let bookGoodRead = new BookGoodRead();
-            bookGoodRead.title = title;
-            bookGoodRead.author = authors[index];
-            bookGoodRead.isbn = isbns[index];
-            bookGoodRead.isbn13 = isbn13s[index];
-            bookGoodRead.numPages = numPagesList[index];
-            bookGoodRead.url = bookUrls[index];
-            return bookGoodRead
+         return books
         });
-    });
-
-}
+    }
 /**
  * Checks if the username is the same as in the page
  * @param page puppeteer page

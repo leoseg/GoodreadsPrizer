@@ -118,6 +118,7 @@ describe("BookService", () => {
                 entry.bookGoodRead.author = testBooksEntities[index].author
                 entry.bookGoodRead.numPages = testBooksEntities[index].numPages
                 entry.bookGoodRead.url = testBooksEntities[index].url
+                entry.bookGoodRead.position = testBooksEntities[index].position
                 return entry})
 
             const actualBookStoreItems = await bookService.getBookstoreEntriesForUser(user);

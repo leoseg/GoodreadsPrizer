@@ -33,6 +33,9 @@ export class BookGoodRead {
     @OneToMany(() => BookStoreItem, (storeItem) => storeItem.bookGoodRead,{cascade: ["insert","update"]})
     storeItems!: BookStoreItem[] ;
 
+    @Column()
+    position!: number;
+
     //
     // @ManyToMany(() => GoodReadsUser, (user) => user.booksGoodRead, )
     // users!: GoodReadsUser[];

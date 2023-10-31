@@ -25,6 +25,7 @@ export var testBooks :BookGoodRead[] = [
         url: 'https://example.com/book1',
         numPages: 200,
         storeItems: [],
+        position: 1,
     },
     {
         author: 'Author 2',
@@ -34,6 +35,7 @@ export var testBooks :BookGoodRead[] = [
         url: 'https://example.com/book2',
         numPages: 300,
         storeItems: [],
+        position: 2,
     },
     {
         author: 'Author 3',
@@ -43,6 +45,7 @@ export var testBooks :BookGoodRead[] = [
         url: 'https://example.com/book3',
         numPages: 400,
         storeItems: [],
+        position: 3,
     },
 ];
 
@@ -112,6 +115,7 @@ newBook.isbn = "123456789"
 newBook.isbn13 = "123456789"
 newBook.url = "https://goodreads.com/book1"
 newBook.numPages = 100
+newBook.position = 4
 
 
 export var notRealNewBook: BookGoodRead = new BookGoodRead()
@@ -123,6 +127,7 @@ notRealNewBook.isbn = testBooks[2].isbn
 notRealNewBook.isbn13 = testBooks[2].isbn13
 notRealNewBook.url = testBooks[2].url
 notRealNewBook.numPages = testBooks[2].numPages
+notRealNewBook.position = testBooks[2].position
 
 export var newBookWithStorePrices: BookGoodRead = new BookGoodRead()
 newBookWithStorePrices.title = "New Book 1"
@@ -133,6 +138,7 @@ newBookWithStorePrices.isbn = "123456789"
 newBookWithStorePrices.isbn13 = "123456789"
 newBookWithStorePrices.url = "https://goodreads.com/book1"
 newBookWithStorePrices.numPages = 100
+newBookWithStorePrices.position = 4
 export var newStoreBook = new BookStoreItem()
 newStoreBook.storeTag = "Thalia"
 newStoreBook.price = "10 €"
@@ -154,3 +160,4 @@ alreadyInUserListbook.isbn = testBooks[0].isbn
 alreadyInUserListbook.isbn13 = testBooks[0].isbn13
 alreadyInUserListbook.url = testBooks[0].url
 alreadyInUserListbook.numPages = testBooks[0].numPages
+alreadyInUserListbook.position = testBooks[0].position
