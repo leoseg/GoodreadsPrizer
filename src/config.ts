@@ -22,4 +22,5 @@ module.exports = {
     DB_NAME : process.env.DB_NAME || "test-db",
     DB_PORT : process.env.DB_PORT || 5433,
     DROP_SCHEMA : process.env.DROP_SCHEMA || false,
+    PRICEALGORITHM : process.env.PRICEALGORITHM || "AsyncPricer",
 }

@@ -1,10 +1,7 @@
 import {getBookList, getNumberOfBooks} from "../scrapeBooks";
 import axios from 'axios';
 import {getBooksData, getNumberBooks, loadPuppeteerPage, scrollToBottom, userNameCheck} from "../scrapeBooksHelpers";
-import {BookStoreItem} from "../../../entity/bookStoreItem";
-import {testBooks} from "../../../service/tests/testdata";
-import {BookGoodRead} from "../../../entity/bookGoodRead";
-import {User} from "../../../entity/user";
+import {GoodReadsUser} from "../../../entity/goodReadsUser";
 
 jest.mock('axios');
 jest.mock('../scrapeBooksHelpers');
@@ -14,9 +11,9 @@ axios.get = jest.fn()
 
 describe('scrapeBooks', () => {
 
-    var user: User
+    var user: GoodReadsUser
     beforeAll(() => {
-        user = new User()
+        user = new GoodReadsUser()
         user.goodreadsName = 'testuser'
         user.goodreadsID =  '123'
     })
@@ -130,41 +127,7 @@ describe('scrapeBooks', () => {
 
 
 
-export var newBook: BookGoodRead = new BookGoodRead()
-newBook.title = "New Book 1"
-newBook.author = "New Author 1"
-newBook.storeItems = [
-]
-newBook.isbn = "123456789"
-newBook.isbn13 = "123456789"
-newBook.url = "https://goodreads.com/book1"
-newBook.numPages = 100
-export var newStoreBook = new BookStoreItem()
-newStoreBook.storeTag = "Thalia"
-newStoreBook.price = "10 €"
-newStoreBook.priceEbook = "10 €"
-newStoreBook.pricePaperback = "10 €"
-newStoreBook.title = "New Book 1"
-newStoreBook.author = "New Author 1"
-newStoreBook.bookGoodRead = newBook
-newStoreBook.storeID = "art1234"
-newStoreBook.url = "https://thalia.com/art1234"
-export var notRealNewBook: BookGoodRead = new BookGoodRead()
-notRealNewBook.title = testBooks[2].title
-notRealNewBook.author = testBooks[2].author
-notRealNewBook.storeItems = [
-]
-notRealNewBook.isbn = testBooks[2].isbn
-notRealNewBook.isbn13 = testBooks[2].isbn13
-notRealNewBook.url = testBooks[2].url
-notRealNewBook.numPages = testBooks[2].numPages
-export var alreadyInUserListbook: BookGoodRead = new BookGoodRead()
-alreadyInUserListbook.title = testBooks[0].title
-alreadyInUserListbook.author = testBooks[0].author
-alreadyInUserListbook.storeItems = [
-]
-alreadyInUserListbook.isbn = testBooks[0].isbn
-alreadyInUserListbook.isbn13 = testBooks[0].isbn13
-alreadyInUserListbook.url = testBooks[0].url
-alreadyInUserListbook.numPages = testBooks[0].numPages
+
+
+
 

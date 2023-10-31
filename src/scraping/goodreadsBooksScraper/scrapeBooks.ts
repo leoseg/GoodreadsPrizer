@@ -4,7 +4,7 @@ import {scrollToBottom, getNumberBooks, getBooksData, userNameCheck, loadPuppete
 import dotenv from 'dotenv';
 import {userAgents} from "./scrapeBooksConfigs";
 import {BookGoodRead} from "../../entity/bookGoodRead";
-import {User} from "../../entity/user";
+import {GoodReadsUser} from "../../entity/goodReadsUser";
 dotenv.config({ path: __dirname + `/../../.env.${process.env.NODE_ENV}` });
 /**
  * Gets the number of books in the shelf
@@ -38,7 +38,7 @@ const getNumberOfBooks = async (userID: string, userName: string): Promise<numbe
  * Gets the list of books in the shelf with author and title
  * @param user user to get the book list for
  */
-const getBookList = async (user: User): Promise<Array<BookGoodRead>> => {
+const getBookList = async (user: GoodReadsUser): Promise<Array<BookGoodRead>> => {
     let transformedUserName = user.goodreadsName.replace(/\s+/g, '-').toLowerCase();
     const url = `https://www.goodreads.com/review/list/${user.goodreadsID}-${transformedUserName}?shelf=to-read`;
     console.log(url)

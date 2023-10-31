@@ -1,8 +1,8 @@
-import { Column, Entity, ManyToMany, PrimaryColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, PrimaryColumn} from "typeorm";
 import {BookGoodRead} from "./bookGoodRead";
 
 @Entity()
-export class User {
+export class GoodReadsUser {
 
     @PrimaryColumn("uuid")
     id!: string;
@@ -13,8 +13,9 @@ export class User {
     @Column()
     goodreadsID!: string;
 
-    @ManyToMany(() => BookGoodRead, (bookGoodRead) => bookGoodRead.users,{cascade: ["insert","update"]}
+    @ManyToMany(() => BookGoodRead, {cascade: ["insert","update"]}
         )
+    @JoinTable({name:"user_book"})
     booksGoodRead!: BookGoodRead[];
 
     //

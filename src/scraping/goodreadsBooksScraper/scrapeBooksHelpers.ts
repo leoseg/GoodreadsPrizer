@@ -1,7 +1,7 @@
 import puppeteer, {Page} from "puppeteer";
 import {minimal_args, userAgents} from "./scrapeBooksConfigs";
 import {BookGoodRead} from "../../entity/bookGoodRead";
-import {User} from "../../entity/user";
+import {GoodReadsUser} from "../../entity/goodReadsUser";
 
 /**
  * Scrolls to the bottom of the page
@@ -39,7 +39,7 @@ export async function getNumberBooks(page: Page) :Promise<number | null>{
  * @param page
  * @param user user to get the book list for
  */
-export async function getBooksData(page: Page,user:User): Promise<BookGoodRead[]>{
+export async function getBooksData(page: Page,user:GoodReadsUser): Promise<BookGoodRead[]>{
     return await page.evaluate(() => {
         let titles: any[] = [];
         let authors: any[] = [];
@@ -98,7 +98,6 @@ export async function getBooksData(page: Page,user:User): Promise<BookGoodRead[]
             bookGoodRead.isbn13 = isbn13s[index];
             bookGoodRead.numPages = numPagesList[index];
             bookGoodRead.url = bookUrls[index];
-            bookGoodRead.users.push(user)
             return bookGoodRead
         });
     });

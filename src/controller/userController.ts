@@ -1,11 +1,11 @@
 import {AppDataSource} from "../db/postgresConfig";
-import {User} from "../entity/user";
+import {GoodReadsUser} from "../entity/goodReadsUser";
 import {Request,Response} from "express";
 import {Service} from "typedi";
 
 @Service()
 export class UserController {
-    private userRepository = AppDataSource.getRepository(User);
+    private userRepository = AppDataSource.getRepository(GoodReadsUser);
 
 
     /**
@@ -13,7 +13,7 @@ export class UserController {
      * @param request request containing the userId in params
      * @param response response containing the status of the request
      */
-    async one(request:Request,response:Response): Promise<User | null> {
+    async one(request:Request,response:Response): Promise<GoodReadsUser | null> {
         const id = response.locals.user.sub
         const user =  await this.userRepository.findOne({ where:id,relations:["booksGoodRead"]});
         if (!user) {
@@ -28,10 +28,10 @@ export class UserController {
      * @param request request containing the user in body
      * @param response response containing information about the user
      */
-    async update(request: Request,response:Response): Promise<User> {
+    async update(request: Request,response:Response): Promise<GoodReadsUser> {
         const id = response.locals.user.sub
         const {goodreadsName,goodreadsID}   = request.body;
-        const user = new User()
+        const user = new GoodReadsUser()
         user.id = id
         user.goodreadsID = goodreadsID
         user.goodreadsName = goodreadsName

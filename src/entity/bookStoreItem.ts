@@ -6,11 +6,11 @@ export class BookStoreItem {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
-    author!: string;
-
-    @Column()
-    title!: string;
+    // @Column()
+    // author!: string;
+    //
+    // @Column()
+    // title!: string;
 
     @Column()
     storeID!: string;

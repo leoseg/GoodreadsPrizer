@@ -2,11 +2,10 @@ import {
     Entity,
     Column,
     OneToMany,
-    ManyToMany,
-    JoinTable, Index, PrimaryColumn
+    Index, PrimaryColumn
 } from 'typeorm';
 import {BookStoreItem} from "./bookStoreItem";
-import {User} from "./user";
+
 
 @Entity()
 @Index('unique_index', ['title', 'author'], { unique: true })
@@ -31,13 +30,12 @@ export class BookGoodRead {
     @Column()
     numPages!: number;
 
-    @OneToMany(() => BookStoreItem, (storeItem) => storeItem.bookGoodRead)
+    @OneToMany(() => BookStoreItem, (storeItem) => storeItem.bookGoodRead,{cascade: ["insert","update"]})
     storeItems!: BookStoreItem[] ;
 
-
-    @ManyToMany(() => User, (user) => user.booksGoodRead, )
-    @JoinTable()
-    users!: User[];
+    //
+    // @ManyToMany(() => GoodReadsUser, (user) => user.booksGoodRead, )
+    // users!: GoodReadsUser[];
 
 }
 

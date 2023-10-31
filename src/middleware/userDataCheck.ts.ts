@@ -1,8 +1,8 @@
 import {Request,Response,NextFunction} from "express";
 import {AppDataSource} from "../db/postgresConfig";
-import {User} from "../entity/user";
+import {GoodReadsUser} from "../entity/goodReadsUser";
 
-const userRepository = AppDataSource.getRepository(User);
+const userRepository = AppDataSource.getRepository(GoodReadsUser);
 export function userDataCheck (request:Request,response:Response,next:NextFunction)  {
     const id = response.locals.user.sub
     userRepository.findOne({ where:id,relations:["booksGoodRead"]}).then((user) => {

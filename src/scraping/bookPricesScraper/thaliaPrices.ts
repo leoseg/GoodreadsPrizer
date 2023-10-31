@@ -1,9 +1,9 @@
 import * as cheerio from 'cheerio';
-import {StorePrices, StoreTag} from "./bookPricer";
 import {axiosGet} from "../../utils";
 import {BookStoreItem} from "../../entity/bookStoreItem";
 import {BookGoodRead} from "../../entity/bookGoodRead";
 import {Service} from "typedi";
+import {StorePrices, StoreTag} from "./priceInterfaces";
 
 /**
  * Implementation of the StorePrices interface for the Thalia store

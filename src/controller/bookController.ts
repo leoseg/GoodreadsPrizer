@@ -1,7 +1,7 @@
 import {Container, Service} from "typedi";
 import {BookService} from "../service/bookService";
 import {Request, Response} from "express";
-import {User} from "../entity/user";
+import {GoodReadsUser} from "../entity/goodReadsUser";
 
 
 @Service()
@@ -17,7 +17,7 @@ export class BookController{
      */
     public async updateBookPricesForUser(request:Request,response:Response):Promise<void>{
         // const userID = response.locals.user.sub
-        const user = response.locals.user as User
+        const user = response.locals.user as GoodReadsUser
         this.bookService.updateBookPricesForUser(user);
         response.status(200).send("Book price updating in progress");
     }

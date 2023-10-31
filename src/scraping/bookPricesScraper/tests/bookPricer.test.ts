@@ -1,59 +1,90 @@
-import {BookPricer, StorePrices, StoreTag} from "../bookPricer";
+import {AsyncPricer} from "../bookPricerImplementations";
 import { BookGoodRead } from "../../../entity/bookGoodRead";
 import {ThaliaPrices} from "../thaliaPrices";
 import {axiosGet} from "../../../utils";
 import {Container} from "typedi";
-import {testBooks} from "./testdata";
+import {StorePrices, StoreTag} from "../priceInterfaces";
+import {
+    alreadyInUserListbook,
+    newBook,
+    newBookWithStorePrices,
+    newStoreBook,
+    notRealNewBook, storeItems, testBooks
+} from "../../../testdata/testbooks";
 
 // Mock the dependencies
-jest.mock("../thaliaPrices");
-jest.mock("../../../entity/bookGoodRead")
-jest.mock("axios");
-jest.mock("../../../utils");
-let mockStorePrices = new ThaliaPrices() as jest.Mocked<StorePrices>;
-Container.set(StoreTag.Thalia,mockStorePrices)
-
+let mockStorePrices :jest.Mocked<StorePrices>
+        jest.mock("../thaliaPrices");
+        jest.mock("../../../entity/bookGoodRead")
+        jest.mock("axios");
+        jest.mock("../../../utils");
+        mockStorePrices = new ThaliaPrices() as jest.Mocked<StorePrices>;
 describe("BookPricer", () => {
-    let bookPricer: BookPricer;
+    let bookPricer: AsyncPricer;
 
     beforeEach(() => {
         // Create an instance of BookPricer with the mock StorePrices
-        bookPricer = new BookPricer();
+        bookPricer = new AsyncPricer();
+
+        Container.set(StoreTag.Thalia,mockStorePrices)
     });
 
     afterEach(() => {
         // Restore the original implementations
-        jest.restoreAllMocks();
+        //jest.clearAllMocks();
     });
 
     describe('getBookPricesListForAllStores', () => {
         it('should call getBookPriceList with the correct values', async () => {
             // Create mock book list
-            const bookList: BookGoodRead[] =  testBooks
+            const bookList: BookGoodRead[] = [
+                alreadyInUserListbook,
+                notRealNewBook,
+                newBook
+            ];
+            const dbBookList: BookGoodRead[] = [
+                testBooks[2],
+                testBooks[0],
+            ]
 
-            const getBookPriceListSpy = jest.spyOn(bookPricer, 'getBookPriceList').mockImplementation(() => {
-                return Promise.resolve(bookList[1].storeItems);
-            });
+            mockStorePrices.getStoreBookData.mockReturnValueOnce(newStoreBook)
+            mockStorePrices.getStoreSearchResult.mockResolvedValueOnce({data: ""});
+            (axiosGet as jest.Mock).mockResolvedValueOnce({data: "bookpage1"});
 
-            await bookPricer.getBookPricesListForAllStores(bookList);
+            const actualBookList = await bookPricer.scrapeBookPricesListForAllStores(bookList, dbBookList);
 
+            //should not contain store items with unkown tag
+            dbBookList[1].storeItems = dbBookList[1].storeItems.filter( storeItem => storeItem.storeTag === StoreTag.Thalia)
+            const expectedBookList = dbBookList.concat([newBookWithStorePrices])
             // Assert that getBookPriceList was called with the correct values
-            expect(getBookPriceListSpy).toHaveBeenCalledTimes(Object.values(StoreTag).length);
-            expect(getBookPriceListSpy).toHaveBeenCalledWith(
-                expect.arrayContaining(bookList.filter(book => book.storeItems.filter(storeItem => storeItem.storeTag ==="Thalia").length === 0)),
-                expect.any(ThaliaPrices)
-            );
+            expect(
+                actualBookList.map(book => book.storeItems.map(storeItem => storeItem.storeID))
+            ).toEqual(
+                expectedBookList.map(book => book.storeItems.map(storeItem => storeItem.storeID))
+            )
         });
     });
-
     it("should get the book price list", async () => {
         // Mock the return values of the mocked functions
+        jest.clearAllMocks()
         const mockSearchResults =
             [ {data:"<href:https://example.com/book" },
                 {data:"<href:https://example.com/book2"}];
         const mockBookUrls = ["https://example.com/book", "https://example.com/book2"];
-        const mockPrices =[ {
-            price: 10},{price: 20}]
+        let book1 = new BookGoodRead()
+        let book2 = new BookGoodRead()
+        book1.title = "Book 1"
+        book2.title = "Book 2"
+        book1.storeItems = []
+        book2.storeItems = []
+
+        let book1WithPrice = new BookGoodRead()
+        let book2WithPrice = new BookGoodRead()
+        book1WithPrice.title = "Book 1"
+        book2WithPrice.title = "Book 2"
+        book1WithPrice.storeItems = [storeItems[0]]
+        book2WithPrice.storeItems = [storeItems[1]]
+        const bookWithPrices =[ book1WithPrice,book2WithPrice]
         // Mock the getStoreSearchResult function
         mockStorePrices.getStoreSearchResult.mockResolvedValueOnce(mockSearchResults[0]).mockResolvedValueOnce(mockSearchResults[1]);
 
@@ -63,16 +94,13 @@ describe("BookPricer", () => {
         // Mock the axiosGet function
         (axiosGet as jest.Mock).mockResolvedValueOnce({ data: "bookpage1"}).mockResolvedValueOnce({ data: "bookpage2" });
 
-        mockStorePrices.getStoreBookData.mockReturnValueOnce(mockPrices[0]).mockReturnValueOnce(mockPrices[1])
+        mockStorePrices.getStoreBookData.mockReturnValueOnce(storeItems[0]).mockReturnValueOnce(storeItems[1])
 
-        let book1 = new BookGoodRead()
-        let book2 = new BookGoodRead()
-        book1.title = "Book 1"
-        book2.title = "Book 2"
+
         // Create a mock book list
         // Call the getBookPriceList method
         let mockBookList = [book1,book2]
-        const bookPriceList = await bookPricer.getBookPriceList(mockBookList,mockStorePrices);
+        const bookPriceList = await bookPricer.updateStorePricesForBooks(mockBookList,StoreTag.Thalia);
 
         // Assert that the mocked functions were called with the correct parameters
         expect(mockStorePrices.getStoreSearchResult).toHaveBeenCalledTimes(2);
@@ -91,6 +119,6 @@ describe("BookPricer", () => {
         expect(mockStorePrices.getStoreBookData).toHaveBeenCalledWith("bookpage1",mockBookUrls[0])
         expect(mockStorePrices.getStoreBookData).toHaveBeenCalledWith("bookpage2",mockBookUrls[1])
         // Assert the returned book price list
-        expect(bookPriceList).toEqual([mockPrices[0], mockPrices[1]]);
+        expect(bookPriceList).toEqual([bookWithPrices[0], bookWithPrices[1]]);
     });
 });

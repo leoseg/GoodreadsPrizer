@@ -1,30 +1,37 @@
 import { Container } from "typedi";
 import { Repository } from "typeorm";
-import { User } from "../../entity/user";
+import { GoodReadsUser } from "../../entity/goodReadsUser";
 import { AppDataSource } from "../../db/postgresConfig";
 import { BookGoodRead } from "../../entity/bookGoodRead";
-import {BookPricer} from "../../scraping/bookPricesScraper/bookPricer";
+import { BookPricer } from "../../scraping/bookPricesScraper/priceInterfaces";
 import { getBookList } from "../../scraping/goodreadsBooksScraper/scrapeBooks";
-import { BookStoreItem } from "../../entity/bookStoreItem";
 import { BookService } from "../bookService";
-import {testBooks, users, newBook,notRealNewBook,newStoreBook} from "./testdata";
-import {alreadyInUserListbook} from "../../scraping/goodreadsBooksScraper/tests/scrapeBooks.test";
-
+import {testBooks, users, newBook, notRealNewBook, newStoreBook, storeItems, newBookWithStorePrices,alreadyInUserListbook} from "../../testdata/testbooks";
+const config = require("../../config")
 
 // Mock the getBookList function
 jest.mock("../../scraping/goodreadsBooksScraper/scrapeBooks", () => ({
     getBookList: jest.fn(),
 }));
-
-
+jest.mock("../../scraping/bookPricesScraper/priceInterfaces")
+const mockBookListWithPrices = [
+            testBooks[2],
+            testBooks[0],
+            newBookWithStorePrices
+        ];
 // Mock the BookPricer class
-let mockPricer = new BookPricer() as jest.Mocked<BookPricer>;
-Container.set(BookPricer,mockPricer );
+let mockPricer : BookPricer = {
+            scrapeBookPricesListForAllStores: jest.fn().mockResolvedValueOnce(
+                mockBookListWithPrices
+            ),
+            updateStorePriceForBook: jest.fn(),
+            }
+            Container.set(config.PRICEALGORITHM as string,mockPricer );
 describe("BookService", () => {
-    let bookService: BookService = new BookService();
+    let bookService: BookService;
     let bookGoodReadRepository: Repository<BookGoodRead>
-    let userRepository: Repository<User>
-    let bookStoreItemRepository: Repository<BookStoreItem>
+    let userRepository: Repository<GoodReadsUser>
+
 
 
     beforeAll(async () => {
@@ -32,26 +39,23 @@ describe("BookService", () => {
             (err) => console.log(err)
         )
         bookGoodReadRepository = AppDataSource.getRepository(BookGoodRead);
-        userRepository = AppDataSource.getRepository(User);
-        bookStoreItemRepository = AppDataSource.getRepository(BookStoreItem);
+        userRepository = AppDataSource.getRepository(GoodReadsUser);
+
 
         //clear before tests
-        bookGoodReadRepository.clear()
-        bookStoreItemRepository.clear()
-        userRepository.clear()
-
+        await userRepository.query('TRUNCATE TABLE good_reads_user CASCADE;')
+        await userRepository.query('TRUNCATE TABLE book_good_read CASCADE;')
+        await userRepository.query('TRUNCATE TABLE book_store_item CASCADE;')
         await userRepository.save(users)
-        await bookGoodReadRepository.save(testBooks)
-        const userst = await userRepository.find({relations:["booksGoodRead"]})
-        console.log(userst)
-    });
-
-
-    beforeEach(() => {
-        // Reset the mock implementation before each test
-        jest.clearAllMocks();
 
     });
+
+    //
+    // afterEach(() => {
+    //     // Reset the mock implementation before each test
+    //     jest.clearAllMocks();
+    //
+    // });
 
     describe("updateBookPricesForUser", () => {
         it("should update book prices for a user", async () => {
@@ -61,15 +65,10 @@ describe("BookService", () => {
                 notRealNewBook,
                 newBook
             ];
+
             (getBookList as jest.Mock).mockResolvedValueOnce(mockBookList);
 
-            // Mock the bookPricer.getBookPricesListForAllStores function
-            const mockBookListWithPrices = [
-                newStoreBook
-            ];
-            (mockPricer.getBookPricesListForAllStores as jest.Mock).mockResolvedValueOnce(
-                mockBookListWithPrices
-            );
+            bookService = Container.get(BookService);
 
             // Create a mock user
             var user = users[0]
@@ -77,31 +76,50 @@ describe("BookService", () => {
             await bookService.updateBookPricesForUser(user);
 
             // Assert that the necessary functions were called with the correct arguments
-            expect(getBookList).toHaveBeenCalledWith(user.goodreadsID, user.goodreadsName);
-            expect(bookGoodReadRepository.upsert).toHaveBeenCalledWith(mockBookList, ["uniqueIndex"]);
+            expect(getBookList).toHaveBeenCalledWith(user);
 
             // expect that the user has the upated booklist with the from goodread
             const updatedUser = await userRepository.findOne({
                 where: { id: user.id }, relations: ["booksGoodRead"]})
-            expect(updatedUser!.booksGoodRead.map(book => book.isbn)).toEqual(mockBookList.map(book => book.isbn))
+            expect(updatedUser!.booksGoodRead.map(book => book.isbn).sort()).toEqual(mockBookList.map(book => book.isbn).sort())
             // expect that each of the goodreads book already their has their user list updated with the new user
-            const allBooksGoodRead = await bookGoodReadRepository.find({relations:["users"]})
-            expect(allBooksGoodRead[0].users).toEqual([users[0]])
-            expect(allBooksGoodRead[1].users).toEqual([users[1]])
-            expect(allBooksGoodRead[2].users).toEqual([users[1],users[0]])
-            // expect that the new books are related to the user
-            expect(allBooksGoodRead[3].users).toEqual([users[0]])
+            const notUpdatedUser = await userRepository.findOne({
+                where: { id: users[1].id }, relations: ["booksGoodRead"]})
+            expect(notUpdatedUser!.booksGoodRead.map(book => book.isbn).sort()).toEqual([testBooks[1].isbn,testBooks[2].isbn].sort())
             // expect that each of the new books has a store item
-            expect(allBooksGoodRead[3].storeItems).toEqual([newStoreBook])
-            // expect that that only for the new books new store item were scrapped, not for the old ones
-            expect(bookStoreItemRepository.save).toHaveBeenCalledWith([newStoreBook]);
+            const allBooksGoodRead =( await bookGoodReadRepository.find({relations:["storeItems"]})).sort()
+            expect(allBooksGoodRead[3].storeItems.map(storeItem => storeItem.storeID)).toEqual([newStoreBook.storeID])
+            expect(allBooksGoodRead[0].storeItems.map(storeItem => storeItem.storeID).sort()).toEqual(
+                [storeItems[0].storeID,storeItems[1].storeID].sort()
+                )
+            expect(allBooksGoodRead[1].storeItems.map(storeItem => storeItem.storeID).sort()).toEqual(
+                [storeItems[2].storeID,storeItems[3].storeID].sort()
+            )
+            expect(allBooksGoodRead[2].storeItems.map(storeItem => storeItem.storeID).sort()).toEqual(
+                [storeItems[4].storeID]
+            )
         });
     });
 
     describe("getBookstoreEntriesForUser", () => {
         it("should get all BookStoreItem entries for a user", async () => {
+            bookService = Container.get(BookService);
             const user = users[1];
-            const expectedBookStoreItems = testBooks[1].storeItems.concat(testBooks[2].storeItems)
+            var testBooksEntities = testBooks.map((entry) => {
+                return bookGoodReadRepository.create(entry)
+            })
+            var expectedBookStoreItems = testBooksEntities[1].storeItems.concat(testBooksEntities[2].storeItems)
+            expectedBookStoreItems = expectedBookStoreItems.map((entry,index) => {
+                index = index === 0?  1 : index
+                entry.bookGoodRead = new BookGoodRead()
+                entry.bookGoodRead.isbn13 = testBooksEntities[index].isbn13
+                entry.bookGoodRead.isbn = testBooksEntities[index].isbn
+                entry.bookGoodRead.title = testBooksEntities[index].title
+                entry.bookGoodRead.author = testBooksEntities[index].author
+                entry.bookGoodRead.numPages = testBooksEntities[index].numPages
+                entry.bookGoodRead.url = testBooksEntities[index].url
+                return entry})
+
             const actualBookStoreItems = await bookService.getBookstoreEntriesForUser(user);
             expect(actualBookStoreItems).toEqual(expectedBookStoreItems);
         });

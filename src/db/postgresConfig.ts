@@ -1,6 +1,6 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import { User } from "../entity/user"
+import { GoodReadsUser } from "../entity/goodReadsUser"
 import {BookGoodRead} from "../entity/bookGoodRead";
 import {BookStoreItem} from "../entity/bookStoreItem";
 const config = require("../config")
@@ -13,7 +13,7 @@ export const AppDataSource = new DataSource({
     database: config.DB_NAME,
     synchronize: true,
     logging: false,
-    entities: [User,BookGoodRead,BookStoreItem],
+    entities: [GoodReadsUser,BookGoodRead,BookStoreItem],
     migrations: ["src/db/migration/*.ts"],
     dropSchema: config.DROP_SCHEMA === "true",
     migrationsRun: true,

@@ -1,6 +1,6 @@
 import {ThaliaPrices} from "../thaliaPrices";
 import axios from "axios";
-import {thaliaBookPage, thaliaSearchResult} from "./testdata";
+import {thaliaBookPage, thaliaSearchResult} from "../../../testdata/mockThaliaPage";
 import {BookGoodRead} from "../../../entity/bookGoodRead";
 import {BookStoreItem} from "../../../entity/bookStoreItem";
 jest.mock('axios');
@@ -14,26 +14,6 @@ describe("ThaliaPrices", () => {
         jest.clearAllMocks();
     });
     describe("getStoreSearchParams", () => {
-        // it("should return isbn13 if it is provided", () => {
-        //     const bookData = new BookGoodRead();
-        //     bookData.author = "testauthor";
-        //     bookData.title = "testtitle";
-        //     bookData.isbn = "testisbn";
-        //     bookData.isbn13 = "testisbn13";
-        //     const expected = "testisbn13";
-        //     const result = thaliaPricesTestClass.getStoreSearchParams(bookData);
-        //     expect(result).toBe(expected);
-        // });
-        // it("should return isbn if it is provided", () => {
-        //     const bookData = new BookGoodRead();
-        //     bookData.author = "testauthor";
-        //     bookData.title = "testtitle";
-        //     bookData.isbn = "testisbn";
-        //     bookData.isbn13 = "";
-        //     const expected = "testisbn";
-        //     const result = thaliaPricesTestClass.getStoreSearchParams(bookData);
-        //     expect(result).toBe(expected);
-        // });
         it("should return title + author", () => {
             const bookData = new BookGoodRead();
             bookData.author = "testauthor";
