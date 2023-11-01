@@ -7,11 +7,11 @@ export class GoodReadsUser {
     @PrimaryColumn("uuid")
     id!: string;
 
-    @Column()
-    goodreadsName!: string;
+    @Column({default: " "})
+    goodreadsName: string = " ";
 
-    @Column()
-    goodreadsID!: string;
+    @Column({default: " "})
+    goodreadsID: string = " ";
 
     @ManyToMany(() => BookGoodRead, {cascade: ["insert","update"]}
         )

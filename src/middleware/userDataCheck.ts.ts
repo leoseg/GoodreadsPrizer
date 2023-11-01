@@ -11,7 +11,7 @@ export function userDataCheck (request:Request,response:Response,next:NextFuncti
             return response.status(404).send({
                 error: "No user found",
             })}
-        if( user.goodreadsID === null || user.goodreadsName === null){
+        if( user.goodreadsID === " "|| user.goodreadsName === " "){
             return response.status(400).send({
                 error: "No user data found",
             })
