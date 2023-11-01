@@ -16,6 +16,7 @@
     "body-parser": "^1.20.2",
     "cheerio": "^1.0.0-rc.12",
     "cognito-express": "^3.0.3",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsdom": "^22.1.0",
@@ -28,6 +29,8 @@
   },
   "scripts": {
     "test": "set NODE_ENV=test && tsc && jest",
-    "typeorm": "typeorm-ts-node-esm"
+    "typeorm": "typeorm-ts-node-esm",
+    "copy": "cp src/csr.pem build/csr.pem && cp src/key.pem build/key.pem && cp src/cert.pem build/cert.pem",
+    "dev": "tsc && NODE_ENV=development node build/index.js"
   }
 }

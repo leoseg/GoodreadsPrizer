@@ -1,16 +1,14 @@
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config({
-    path: path.resolve(__dirname, `.env.${process.env.NODE_ENV}`)
+    path: path.resolve(__dirname+"/../src", `.env.${process.env.NODE_ENV}`)
 });
-
 module.exports = {
     NODE_ENV : process.env.NODE_ENV || 'development',
     HOST : process.env.HOST || 'localhost',
     PORT : process.env.PORT || 3000,
     GOODREADS_USERID : process.env.GOODREADS_USERID,
     GOODREADS_USERNAME: process.env.GOODREADS_USERNAME,
-    // export all values from .env.test file
     COGNITO_USER_POOL_ID : process.env.COGNITO_USER_POOL_ID,
     AWS_DEFAULT_REGION : process.env.AWS_DEFAULT_REGION,
     LOGIN_URL : process.env.LOGIN_URL,
