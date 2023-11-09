@@ -50,7 +50,6 @@ export class BookController{
             const user = response.locals.user as GoodReadsUser
             const storeTag = request.params.storeTag ? request.params.storeTag : undefined;
             const books = await this.bookService.getBookstoreEntriesForUser(user,storeTag);
-            console.log(books)
             return response.json(books)
         }catch (error) {
             console.log(error)
