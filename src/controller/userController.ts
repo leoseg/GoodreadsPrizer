@@ -34,8 +34,14 @@ export class UserController {
     };
 
     public logout = async (request: Request, response: Response): Promise<Response> => {
-        response.clearCookie("accessToken");
-        return response.status(200).send("User logged out successfully");
+        try{
+            response.clearCookie("accessToken");
+            return response.status(200).send("User logged out successfully");
+        }catch (error) {
+            console.error(error);
+            return response.status(500).send("An error occurred during logout");
+        }
+
     };
 
     public remove = async (request: Request, response: Response): Promise<Response> => {

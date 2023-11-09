@@ -38,10 +38,15 @@ export class BookController{
      * @param response response containing information about the user
      */
     public getBookstoreEntriesForUser = async (request: Request,response:Response)=> {
-        const user = response.locals.user as GoodReadsUser
-        const storeTag = request.params.storeTag ? request.params.storeTag : undefined;
-        const books = await this.bookService.getBookstoreEntriesForUser(user,storeTag);
-        console.log(books)
-        return response.json(books)
+        try{
+            const user = response.locals.user as GoodReadsUser
+            const storeTag = request.params.storeTag ? request.params.storeTag : undefined;
+            const books = await this.bookService.getBookstoreEntriesForUser(user,storeTag);
+            console.log(books)
+            return response.json(books)
+        }catch (error) {
+            console.log(error)
+            response.status(500).send("Error getting book prices")
+        }
     }
 }

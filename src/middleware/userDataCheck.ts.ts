@@ -8,13 +8,13 @@ export function userDataCheck (request:Request,response:Response,next:NextFuncti
     userRepository.findOne({ where: {id:id}
     }).then((user) => {
         if (!user) {
-            console.log("unregistered user");
+            console.log("User with id: " + id + " not found");
             return response.status(404).send({
                 error: "No user found",
             })}
         if( user.goodreadsID === " "|| user.goodreadsName === " "){
             return response.status(406).send({
-                error: "No user data found",
+                error: "No user data found for user with id: " + id,
             })
         }else{
             response.locals.user= user
