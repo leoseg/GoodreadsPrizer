@@ -22,13 +22,13 @@ export class BookStoreItem {
     storeTag!: string
 
     @Column()
-    priceEbook!: string;
+    priceEbook: string = " ";
 
     @Column()
-    price!: string;
+    price: string = " ";
 
     @Column()
-    pricePaperback!: string;
+    pricePaperback: string = " ";
 
     @ManyToOne(() => BookGoodRead, (bookGoodRead) => bookGoodRead.storeItems)
     bookGoodRead!: BookGoodRead;

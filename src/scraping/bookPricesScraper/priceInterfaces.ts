@@ -1,10 +1,9 @@
 import {BookGoodRead} from "../../entity/bookGoodRead";
 import {BookStoreItem} from "../../entity/bookStoreItem";
-
+import {ContentFetcher} from "../contentFetcher";
 export enum StoreTag {
     Thalia = "Thalia",
 }
-
 /**
  * Interface for the store prices
  */
@@ -18,11 +17,15 @@ export interface StorePrices {
 
     storeBaseUrl: string
 
+    contentFetcher: ContentFetcher
+
+
+
     /**
-     * Returns the html response of the search result page
+     * Returns the store search url
      * @param bookData book data to search for
      */
-    getStoreSearchResult(bookData: BookGoodRead): Promise<any>;
+    getStoreSearchUrl(bookData: BookGoodRead): string;
 
     /**
      * Returns the url of the book page
@@ -43,9 +46,13 @@ export interface StorePrices {
      * @param bookData book data to search for
      */
     getStoreSearchParams(bookData: BookGoodRead): string;
+
+
 }
 
 export interface BookPricer{
+
+
     scrapeBookPricesListForAllStores(bookList:Array<BookGoodRead>,booksFromDB:Array<BookGoodRead>) : Promise<Array<BookGoodRead>>
 
     updateStorePriceForBook(book:BookGoodRead,storePricesTag:string):Promise<BookGoodRead>

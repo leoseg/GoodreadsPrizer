@@ -6,5 +6,5 @@ export const booksRouter = Router()
 const bookController = Container.get(BookController)
 
 //
-booksRouter.post("/bookPricesUpdate", bookController.updateBookPricesForUser)
-booksRouter.get("/bookPrices/:storeTag", bookController.getBookstoreEntriesForUser)
+booksRouter.get("/bookPricesUpdate", bookController.updateBookPricesForUser)
+booksRouter.get("/bookPrices/:storeTag?", bookController.getBookstoreEntriesForUser)

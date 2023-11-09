@@ -7,5 +7,6 @@ const userController = Container.get(UserController)
 
 //
 userRouter.post("/user",userController.update)
-userRouter.delete("/user/:id",userController.remove)
-userRouter.get("/user/:id", userController.one)
+userRouter.delete("/user",userController.remove)
+userRouter.get("/user", userController.one)
+userRouter.get("/logout", userController.logout)

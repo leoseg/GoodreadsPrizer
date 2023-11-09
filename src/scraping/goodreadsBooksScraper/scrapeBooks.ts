@@ -56,7 +56,7 @@ const getBookList = async (user: GoodReadsUser): Promise<Array<BookGoodRead>> =>
 
         console.timeEnd("scroll")
 
-        const booksData = await getBooksData(page,user)
+        const booksData = await getBooksData(page)
         await page.close();
         return booksData;
     } catch (error) {

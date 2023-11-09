@@ -15,7 +15,7 @@ export class BookController{
      * @param request request containing the userId in cookkies
      * @param response response containing the status of the request
      */
-    public async updateBookPricesForUser(request:Request,response:Response):Promise<void>{
+    public updateBookPricesForUser = async (request:Request,response:Response):Promise<void> =>{
         // const userID = response.locals.user.sub
         try {
             response.setHeader('Content-Type', 'text/event-stream');
@@ -37,9 +37,11 @@ export class BookController{
      * @param request request containing the userId in cookkies and the storeTag in params
      * @param response response containing information about the user
      */
-    async getBookstoreEntriesForUser(request: Request,response:Response) {
-        const userID = response.locals.user.sub
-        const storeTag = request.params.storeTag;
-        return await this.bookService.getBookstoreEntriesForUser(userID,storeTag);
+    public getBookstoreEntriesForUser = async (request: Request,response:Response)=> {
+        const user = response.locals.user as GoodReadsUser
+        const storeTag = request.params.storeTag ? request.params.storeTag : undefined;
+        const books = await this.bookService.getBookstoreEntriesForUser(user,storeTag);
+        console.log(books)
+        return response.json(books)
     }
 }

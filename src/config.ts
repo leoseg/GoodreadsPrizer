@@ -10,6 +10,10 @@ module.exports = {
     GOODREADS_USERID : process.env.GOODREADS_USERID,
     GOODREADS_USERNAME: process.env.GOODREADS_USERNAME,
     COGNITO_USER_POOL_ID : process.env.COGNITO_USER_POOL_ID,
+    COGNITO_CLIENT_ID : process.env.COGNITO_CLIENT_ID,
+    COGNITO_CLIENT_SECRET : process.env.COGNITO_CLIENT_SECRET,
+    COGNITO_REDIRECT_URI : process.env.COGNITO_REDIRECT_URI,
+    COGNITO_DOMAIN : process.env.COGNITO_DOMAIN,
     AWS_DEFAULT_REGION : process.env.AWS_DEFAULT_REGION,
     LOGIN_URL : process.env.LOGIN_URL,
     TESTUSERNAME : process.env.TESTUSERNAME,
@@ -21,4 +25,6 @@ module.exports = {
     DB_PORT : process.env.DB_PORT || 5433,
     DROP_SCHEMA : process.env.DROP_SCHEMA || false,
     PRICEALGORITHM : process.env.PRICEALGORITHM || "AsyncPricer",
+    SECURE_COOKIE : process.env.SECURE_COOKIE || true,
+    FRONTEND_URL : process.env.FRONTEND_URL || "http://localhost:3001"
 }

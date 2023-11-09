@@ -1,15 +1,21 @@
-import {axiosGet} from "../../utils";
 import {BookGoodRead} from "../../entity/bookGoodRead";
 import {BookStoreItem} from "../../entity/bookStoreItem";
 import {Container, Service} from "typedi";
 import {BookPricer, StorePrices, StoreTag} from "./priceInterfaces";
+import "reflect-metadata";
+import { ThaliaPrices } from "./thaliaPrices";
+
 
 
 /**
  * Class for the book pricer gets prices from a store, store type is defined by the storePricesImpl attribute
  */
-@Service("AsyncPricer")
+@Service()
 export class AsyncPricer implements BookPricer{
+
+    private tagImplMap = {
+       Thalia : ThaliaPrices
+    }
 
 
     /**
@@ -38,7 +44,7 @@ export class AsyncPricer implements BookPricer{
                             book.storeItems.push(bookFromDBItem)
                         }
                         else{
-                            book = await this.updateStorePriceForBook(book,tag)
+                                book = await this.updateStorePriceForBook(book,tag)
                         }
                         return book
                     })
@@ -47,28 +53,28 @@ export class AsyncPricer implements BookPricer{
         ))
 
     }
-    /**
-     * Updates the given book list with store prices
-     * @param bookList list of books to update the prices for
-     * @param storePricesTag tag of the store to update the prices for
-     */
-    public async updateStorePricesForBooks(bookList:Array<BookGoodRead>, storePricesTag:string){
-        const storePricesImpl : StorePrices = Container.get(storePricesTag)
-        const storeSearchResults = await Promise.all(bookList.map(async (bookData) => storePricesImpl.getStoreSearchResult(bookData)));
-
-        const urls = storeSearchResults.map((searchResponse, index) => {
-            const bookName = bookList[index].title;
-            return storePricesImpl.getStoreBookUrl(searchResponse.data, bookName);
-        })
-
-        const bookPages= await Promise.all(urls.map(async (url) => axiosGet(url)));
-
-        return Promise.all(bookPages.map(async (page,index) => {
-            let bookItem : BookStoreItem = storePricesImpl.getStoreBookData(page.data,urls[index])
-            bookList[index].storeItems.push(bookItem)
-            return bookList[index]
-        }));
-    }
+    // /**
+    //  * Updates the given book list with store prices
+    //  * @param bookList list of books to update the prices for
+    //  * @param storePricesTag tag of the store to update the prices for
+    //  */
+    // public async updateStorePricesForBooks(bookList:Array<BookGoodRead>, storePricesTag:string){
+    //     const storePricesImpl : StorePrices = Container.get(storePricesTag)
+    //     const storeSearchUrls = await Promise.all(bookList.map(async (bookData) => storePricesImpl.getStoreSearchUrl(bookData)));
+    //
+    //     const urls = storeSearchResults.map((searchResponse, index) => {
+    //         const bookName = bookList[index].title;
+    //         return storePricesImpl.getStoreBookUrl(searchResponse.data, bookName);
+    //     })
+    //
+    //     const bookPages= await Promise.all(urls.map(async (url) => axiosGet(url)));
+    //
+    //     return Promise.all(bookPages.map(async (page,index) => {
+    //         let bookItem : BookStoreItem = storePricesImpl.getStoreBookData(page.data,urls[index])
+    //         bookList[index].storeItems.push(bookItem)
+    //         return bookList[index]
+    //     }));
+    // }
 
     /**
      * Updates the given book with store prices
@@ -76,17 +82,31 @@ export class AsyncPricer implements BookPricer{
      * @param storePricesTag tag of the store to update the prices for
      */
     public async updateStorePriceForBook(book: BookGoodRead, storePricesTag:string){
-        const storePricesImpl : StorePrices = Container.get(storePricesTag)
-        const storeSearchResult = await storePricesImpl.getStoreSearchResult(book);
-
-        const url = storePricesImpl.getStoreBookUrl(storeSearchResult.data, book.title);
-
-        const bookPage = await axiosGet(url);
-
-        let bookItem : BookStoreItem = storePricesImpl.getStoreBookData(bookPage.data,url)
+        const storePricesImpl : StorePrices = Container.get(this.tagImplMap[storePricesTag])
+        const storeSearchUrl = await storePricesImpl.getStoreSearchUrl(book);
+        const storeSearchContent = await storePricesImpl.contentFetcher.fetchContent(storeSearchUrl);
+        const url = storePricesImpl.getStoreBookUrl(storeSearchContent, book.title);
+        if(url === ""){
+            const bookItem = new BookStoreItem()
+            bookItem.storeTag = storePricesTag
+            bookItem.price = " "
+            bookItem.priceEbook = " "
+            bookItem.pricePaperback = " "
+            bookItem.storeID = "Not found"
+            bookItem.url = "Not found"
+            book.storeItems.push(bookItem)
+            return book
+        }
+        const bookPage = await storePricesImpl.contentFetcher.fetchContent(url);
+        let bookItem : BookStoreItem = storePricesImpl.getStoreBookData(bookPage,url)
         book.storeItems.push(bookItem)
         return book
     }
+
+
+
+
+
 
 
 

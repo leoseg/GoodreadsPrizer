@@ -1,7 +1,8 @@
-import puppeteer, {Page} from "puppeteer";
+import puppeteer, { Page} from "puppeteer";
 import {minimal_args, userAgents} from "./scrapeBooksConfigs";
 import {BookGoodRead} from "../../entity/bookGoodRead";
-import {GoodReadsUser} from "../../entity/goodReadsUser";
+
+
 
 /**
  * Scrolls to the bottom of the page
@@ -37,14 +38,14 @@ export async function getNumberBooks(page: Page) :Promise<number | null>{
 /**
  * Gets the list of books in the shelf with title, author, isbn, isbn13, number of pages and link
  * @param page
- * @param user user to get the book list for
  */
-export async function getBooksData(page: Page,user:GoodReadsUser): Promise<BookGoodRead[]>{
-    var books: BookGoodRead[] = []
+export async function getBooksData(page: Page): Promise<BookGoodRead[]>{
     return await page.evaluate(() => {
+        var books :any = []
         const bookElements = document.querySelectorAll('#booksBody > tr');
-        bookElements.forEach(element => {
-            var book = new BookGoodRead();
+        bookElements.forEach((element,index) => {
+            let book = {} as BookGoodRead
+            book.storeItems = []
             const titleElement = element.querySelector('.field.title a');
             if (titleElement) {
                 if(titleElement.getAttribute("title") != null){
@@ -88,11 +89,15 @@ export async function getBooksData(page: Page,user:GoodReadsUser): Promise<BookG
             if(numPages) {
                 if (numPages.textContent) {
                     book.numPages = parseInt(numPages.textContent.trim())
+                }else{
+                    book.numPages = 0
                 }
             }
             const position: Element|null = element.querySelector(".field.position .value input[type='text']")
             if(position){
                 book.position = parseInt(position?.getAttribute("value") as string)
+            }else{
+                book.position = bookElements.length - index
             }
             books.push(book)
         });
@@ -113,6 +118,8 @@ export async function userNameCheck(page: Page, userName: string): Promise<void>
         throw Error("False UserID")
     }
 }
+
+
 
 /**
  * Loads a puppeteer page with the given url
@@ -144,5 +151,6 @@ export async function loadPuppeteerPage(url: string): Promise<Page> {
 
 
     console.timeEnd("loadPage")
+
     return page;
 }

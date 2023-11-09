@@ -8,28 +8,16 @@ const cognitoExpress = new CognitoExpress({
     tokenUse: "access",
     tokenExpiration: 3600
 })
-
 export function validateAuth (request : Request, response:Response, next:NextFunction)  {
     // Check that the request contains a token
-    if (request.headers.authorization && request.headers.authorization.split(" ")[0] === "Bearer") {
-        // Validate the token
-        const token = request.headers.authorization.split(" ")[1]
-        cognitoExpress.validate(token, function (err: any, response: Response) {
-            if (err) {
-                // If there was an error, return a 401 Unauthorized along with the error
-                response.status(401).send({
-                    error: "Not authenticated",
-                    idp: process.env.LOGIN_URL,
-                    detail: err.message
-                });
-            } else {
-                response.locals.user = response;
-                next();
-            }
+    if (!request.cookies || !request.cookies.accessToken) return response.status(401).send({
+        error: "Not authenticated",
+        detail: "Access Token missing from header"
+    })
+    let accessTokenFromClient = request.cookies.accessToken;
+        // Validate the token and if valid, the response will contain user information
+        cognitoExpress.validate(accessTokenFromClient, function (err: any, cognitoResponse: Response) {
+            response.locals.user = cognitoResponse;
+            next();
         });
-    } else {
-        // If there is no token, respond appropriately
-        // @ts-ignore
-        return response.redirect(process.env.LOGIN_URL)
-    }
 }

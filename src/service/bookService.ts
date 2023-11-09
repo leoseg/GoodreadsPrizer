@@ -1,4 +1,4 @@
-import {Container, Inject, Service} from "typedi";
+import {Container, Service} from "typedi";
 import {Repository} from "typeorm";
 import {GoodReadsUser} from "../entity/goodReadsUser";
 import {AppDataSource} from "../db/postgresConfig";
@@ -6,17 +6,22 @@ import {BookGoodRead} from "../entity/bookGoodRead";
 import {getBookList} from "../scraping/goodreadsBooksScraper/scrapeBooks";
 import {BookStoreItem} from "../entity/bookStoreItem";
 import {BookPricer} from "../scraping/bookPricesScraper/priceInterfaces";
+import "reflect-metadata";
+import {AsyncPricer} from "../scraping/bookPricesScraper/bookPricerImplementations";
 const config = require("../config")
+
 
 
 @Service()
 export class BookService{
 
-
     private bookGoodReadRepository:Repository<BookGoodRead> = AppDataSource.getRepository(BookGoodRead)
     private userRepository:Repository<GoodReadsUser> = AppDataSource.getRepository(GoodReadsUser)
     private bookStoreItemRepository:Repository<BookStoreItem> = AppDataSource.getRepository(BookStoreItem);
 
+    private algNameMap = {
+        AsyncPricer : AsyncPricer
+    }
 
     /**
      * Update the book prices for a user
@@ -34,7 +39,7 @@ export class BookService{
                 relations:["storeItems"]
             },
         )
-        const bookPricer : BookPricer = Container.get(config.PRICEALGORITHM as string)
+        const bookPricer : BookPricer = Container.get(this.algNameMap[config.PRICEALGORITHM])
         const bookListWithPrices = await bookPricer.scrapeBookPricesListForAllStores(
             bookList,booksFromDB
         )

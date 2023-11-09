@@ -1,14 +1,14 @@
 import * as cheerio from 'cheerio';
-import {axiosGet} from "../../utils";
 import {BookStoreItem} from "../../entity/bookStoreItem";
 import {BookGoodRead} from "../../entity/bookGoodRead";
-import {Service} from "typedi";
+import {Container, Service} from "typedi";
 import {StorePrices, StoreTag} from "./priceInterfaces";
+import {ContentFetcher, PuppeteerFetcher} from "../contentFetcher";
 
 /**
  * Implementation of the StorePrices interface for the Thalia store
  */
-@Service(StoreTag.Thalia)
+@Service()
 export class ThaliaPrices implements StorePrices{
 
     storeTag: StoreTag = StoreTag.Thalia
@@ -19,10 +19,10 @@ export class ThaliaPrices implements StorePrices{
         ["Taschenbuch","pricePaperback"]
         ]);
     storeBaseUrl: string = "https://www.thalia.de"
+    contentFetcher: ContentFetcher = Container.get(PuppeteerFetcher)
 
-    async getStoreSearchResult(bookData: BookGoodRead): Promise<any> {
-        const url = this.searchUrl + this.getStoreSearchParams(bookData)
-        return axiosGet(url);
+    getStoreSearchUrl(bookData: BookGoodRead): string {
+        return this.searchUrl + this.getStoreSearchParams(bookData)
     }
 
     getStoreSearchParams(bookData: BookGoodRead): string {
@@ -43,7 +43,8 @@ export class ThaliaPrices implements StorePrices{
         if(link){
             return this.storeBaseUrl+link;
         }else{
-            throw new Error("No book found in scraped page.");
+            console.log("No book found for "+bookName)
+            return ""
         }
 
     }
