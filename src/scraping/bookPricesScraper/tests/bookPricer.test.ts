@@ -16,7 +16,6 @@ let mockStorePrices :jest.Mocked<StorePrices>
         jest.mock("../thaliaPrices");
         jest.mock("../../../entity/bookGoodRead")
         jest.mock("axios");
-        jest.mock("../../../utils");
         mockStorePrices = new ThaliaPrices() as jest.Mocked<StorePrices>;
 describe("BookPricer", () => {
     let bookPricer: AsyncPricer;
@@ -27,7 +26,7 @@ describe("BookPricer", () => {
         mockStorePrices.contentFetcher = {
             fetchContent: jest.fn().mockResolvedValueOnce("").mockResolvedValueOnce("bookpage1")
         }
-        Container.set(StoreTag.Thalia,mockStorePrices)
+        Container.set(ThaliaPrices,mockStorePrices)
     });
 
     afterEach(() => {

@@ -5,7 +5,6 @@ import {GoodReadsUser} from "../../../entity/goodReadsUser";
 
 jest.mock('axios');
 jest.mock('../scrapeBooksHelpers');
-jest.mock('../../../utils');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 axios.get = jest.fn()
 
@@ -100,7 +99,7 @@ describe('scrapeBooks', () => {
             expect(userNameCheck).toHaveBeenCalledWith(mockPage, user.goodreadsName);
             expect(getNumberBooks).toHaveBeenCalledWith(mockPage);
             expect(scrollToBottom).toHaveBeenCalledWith(mockPage, 2);
-            expect(getBooksData).toHaveBeenCalledWith(mockPage,user);
+            expect(getBooksData).toHaveBeenCalledWith(mockPage);
             expect(mockPage.close).toBeCalled();
         });
 
@@ -109,7 +108,7 @@ describe('scrapeBooks', () => {
             (userNameCheck as jest.Mock).mockRejectedValueOnce(error);
 
             // Call the function and expect it to throw an error
-            await expect(getBookList(user)).rejects.toThrow('Could not load page');
+            await expect(getBookList(user)).rejects.toThrow('Goodreads scrapping failed');
 
         });
 

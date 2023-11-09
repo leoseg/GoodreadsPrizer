@@ -7,7 +7,7 @@ import { BookPricer } from "../../scraping/bookPricesScraper/priceInterfaces";
 import { getBookList } from "../../scraping/goodreadsBooksScraper/scrapeBooks";
 import { BookService } from "../bookService";
 import {testBooks, users, newBook, notRealNewBook, newStoreBook, storeItems, newBookWithStorePrices,alreadyInUserListbook} from "../../testdata/testbooks";
-const config = require("../../config")
+import {AsyncPricer} from "../../scraping/bookPricesScraper/bookPricerImplementations";
 
 // Mock the getBookList function
 jest.mock("../../scraping/goodreadsBooksScraper/scrapeBooks", () => ({
@@ -26,7 +26,7 @@ let mockPricer : BookPricer = {
             ),
             updateStorePriceForBook: jest.fn(),
             }
-            Container.set(config.PRICEALGORITHM as string,mockPricer );
+            Container.set(AsyncPricer,mockPricer );
 describe("BookService", () => {
     let bookService: BookService;
     let bookGoodReadRepository: Repository<BookGoodRead>
