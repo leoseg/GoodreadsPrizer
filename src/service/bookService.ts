@@ -29,7 +29,6 @@ export class BookService{
      */
     async updateBookPricesForUser(user:GoodReadsUser){
         var bookList = await getBookList(user)
-        // await this.bookGoodReadRepository.save(bookList)
         const orConditions = bookList.map(book => ({
             author: book.author,
             title: book.title,

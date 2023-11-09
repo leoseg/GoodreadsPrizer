@@ -18,14 +18,21 @@ export class BookController{
     public updateBookPricesForUser = async (request:Request,response:Response):Promise<void> =>{
         // const userID = response.locals.user.sub
         try {
-            response.setHeader('Content-Type', 'text/event-stream');
-            response.setHeader('Cache-Control', 'no-cache');
-            response.setHeader('Connection', 'keep-alive');
+            response.writeHead(200, {
+                'Content-Type': 'text/event-stream',
+                'Cache-Control': 'no-cache',
+                'Connection': 'keep-alive',
+            'Content-Encoding': 'none'})
+            response.flushHeaders()
+            response.write("data: connection established\n\n")
             const user = response.locals.user as GoodReadsUser
-            await this.bookService.updateBookPricesForUser(user);
-            response.write("data: Book price updating finished");
-            response.end()
-        } catch (error) {
+            await this.bookService.updateBookPricesForUser(user)
+            response.write("data: Book price updating finished\n\n");
+            request.on('close', () => {
+                response.end();
+                console.log('Connection closed  by the client');
+            })
+        }catch(error) {
             console.log(error)
             response.status(500).send("Error updating book prices")
         }

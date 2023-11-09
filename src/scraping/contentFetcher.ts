@@ -29,6 +29,7 @@ export class AxiosFetcher implements ContentFetcher {
             })
             .catch(error => {
                 console.log(error)
+                throw new Error(`Error fetching content from ${url}`);
             })
        return content.data
     }
@@ -57,18 +58,24 @@ export class PuppeteerFetcher implements ContentFetcher {
 
 
       async fetchContent(url) {
-        if (!this.browser) {
-            await this.setup();
+        try{
+                if (!this.browser) {
+                    await this.setup();
+                }
+                const page = await this.acquirePage();
+                try {
+                    await page.goto(url, {waitUntil: 'networkidle2'});
+                    return await page.content();
+                } catch (error) {
+                    // @ts-ignore
+                    throw new Error(`Error fetching content from ${url}: ${error.message}`);
+                } finally {
+                    await this.release(page);
+                }
         }
-        const page = await this.acquirePage();
-        try {
-            await page.goto(url, { waitUntil: 'networkidle2' });
-            return await page.content();
-        } catch (error) {
+        catch (error) {
             console.log(error)
             throw new Error(`Error fetching content from ${url}`);
-        } finally {
-            await this.release(page);
         }
     }
 

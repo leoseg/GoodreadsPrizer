@@ -66,7 +66,7 @@ export async function getBooksData(page: Page): Promise<BookGoodRead[]>{
                 if (authorElement.textContent) {
                     book.author = authorElement.textContent.trim();
                 } else {
-                    book.author = "Unknown"
+                    book.author = ""
                 }
             }
             const isbnElement = element.querySelector('.field.isbn div');

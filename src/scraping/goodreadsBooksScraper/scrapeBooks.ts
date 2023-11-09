@@ -41,7 +41,6 @@ const getNumberOfBooks = async (userID: string, userName: string): Promise<numbe
 const getBookList = async (user: GoodReadsUser): Promise<Array<BookGoodRead>> => {
     let transformedUserName = user.goodreadsName.replace(/\s+/g, '-').toLowerCase();
     const url = `https://www.goodreads.com/review/list/${user.goodreadsID}-${transformedUserName}?shelf=to-read`;
-    console.log(url)
     try {
         const page = await loadPuppeteerPage(url)
         await userNameCheck(page, user.goodreadsName)
@@ -61,7 +60,7 @@ const getBookList = async (user: GoodReadsUser): Promise<Array<BookGoodRead>> =>
         return booksData;
     } catch (error) {
         console.log(error)
-        throw Error("Could not load page");
+        throw Error("Goodreads scrapping failed");
     }
 }
 // // Example usage:

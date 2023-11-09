@@ -55,6 +55,7 @@ authRouter.get('/auth/check', async (request, response) => {
             detail: "Access Token missing from header"
         })
     } else {
+        console.log("User authenticated")
         return response.status(200)
     }
 });
