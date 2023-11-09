@@ -31,8 +31,9 @@ export interface StorePrices {
      * Returns the url of the book page
      * @param searchResponseData html response of the search result page
      * @param bookName name of the book to search for
+     * @param bookAutor author of the book to search for
      */
-    getStoreBookUrl(searchResponseData: any, bookName: string): string;
+    getStoreBookUrl(searchResponseData: any, bookName: string,bookAutor:string): string;
 
     /**
      * Returns the book data from the book page

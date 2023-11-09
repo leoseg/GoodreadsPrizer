@@ -1,6 +1,6 @@
 import {ThaliaPrices} from "../thaliaPrices";
 import axios from "axios";
-import {thaliaBookPage, thaliaSearchResult} from "../../../testdata/mockThaliaPage";
+import {grmPage, suesspage, thaliaBookPage, thaliaSearchResult} from "../../../testdata/mockThaliaPage";
 import {BookGoodRead} from "../../../entity/bookGoodRead";
 import {BookStoreItem} from "../../../entity/bookStoreItem";
 jest.mock('axios');
@@ -37,8 +37,18 @@ describe("ThaliaPrices", () => {
     });
     describe("getStoreBookUrl", () => {
         it("should return the book url if the book is found", () => {
-            const url:string = thaliaPricesTestClass.getStoreBookUrl(thaliaSearchResult, "Die Haushälterin");
+            const url:string = thaliaPricesTestClass.getStoreBookUrl(thaliaSearchResult, "Die Haushälterin","Fielding, Joy");
             const expectedUrl ="https://www.thalia.de/shop/home/artikeldetails/A1063536722"
+            expect(url).toBe(expectedUrl);
+        });
+        it("should return the book url for suess book if found", () => {
+            const url:string = thaliaPricesTestClass.getStoreBookUrl(suesspage,"Süss : Süss: eine feministische Kritik",'Tlusty, Ann-Kristin');
+            const expectedUrl ="https://www.thalia.de/shop/home/artikeldetails/A1060434456"
+            expect(url).toBe(expectedUrl);
+        });
+        it("should return the book url for grm book if found", () => {
+            const url:string = thaliaPricesTestClass.getStoreBookUrl(grmPage,'GRM: Brainfuck','Berg, Sibylle');
+            const expectedUrl ="https://www.thalia.de/shop/home/artikeldetails/A1065393050"
             expect(url).toBe(expectedUrl);
         });
     });

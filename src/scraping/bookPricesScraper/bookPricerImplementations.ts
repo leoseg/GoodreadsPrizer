@@ -27,7 +27,7 @@ export class AsyncPricer implements BookPricer{
         const tags = Object.values(StoreTag);
         const authorTitleMap = new Map();
         booksFromDB.forEach(obj => {
-          obj.storeItems.forEach(
+          obj.storeItems.filter((storeItem)=>storeItem.url !== "Not found" ).forEach(
             storeItem => {
                 const key = `${obj.author}-${obj.title}-${storeItem.storeTag}`;
                 authorTitleMap.set(key, storeItem);
@@ -85,7 +85,7 @@ export class AsyncPricer implements BookPricer{
         const storePricesImpl : StorePrices = Container.get(this.tagImplMap[storePricesTag])
         const storeSearchUrl = await storePricesImpl.getStoreSearchUrl(book);
         const storeSearchContent = await storePricesImpl.contentFetcher.fetchContent(storeSearchUrl);
-        const url = storePricesImpl.getStoreBookUrl(storeSearchContent, book.title);
+        const url = storePricesImpl.getStoreBookUrl(storeSearchContent, book.title,book.author);
         if(url === ""){
             const bookItem = new BookStoreItem()
             bookItem.storeTag = storePricesTag

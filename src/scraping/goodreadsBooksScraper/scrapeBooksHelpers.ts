@@ -54,7 +54,7 @@ export async function getBooksData(page: Page): Promise<BookGoodRead[]>{
                     return;
                 }
                 if(titleElement.getAttribute("href") != null){
-                    book.url = titleElement.getAttribute("href")!
+                    book.url = "https://www.goodreads.com"+titleElement.getAttribute("href")!
                 }else{
                     return;
                 }

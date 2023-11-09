@@ -4,7 +4,8 @@ import {BookGoodRead} from "../../entity/bookGoodRead";
 import {Container, Service} from "typedi";
 import {StorePrices, StoreTag} from "./priceInterfaces";
 import {ContentFetcher, PuppeteerFetcher} from "../contentFetcher";
-
+import {findBestMatch,compareTwoStrings} from "string-similarity";
+import {normalizeString} from "../scrappingUtils";
 /**
  * Implementation of the StorePrices interface for the Thalia store
  */
@@ -30,30 +31,51 @@ export class ThaliaPrices implements StorePrices{
         return bookData.title.split(" ").join("+") + "+" + author_param;
     }
 
-    getStoreBookUrl(searchResponseData: any,bookName:string):string{
+    getStoreBookUrl(searchResponseData: any,bookName:string,bookAutor:string):string{
         const $ = cheerio.load(searchResponseData);
-        let link;
+        let products: any = []
         $('.tm-produktliste__eintrag.artikel').each(function() {
             const productName = $(this).find('dl-product').attr('name');
-            if (productName && productName.includes(bookName)) {
-                link = $(this).find('a.element-link-toplevel.tm-produkt-link').attr('href');
-                return false; // breaks out of the .each() loop since we've found the link
+            const productAuthor = $(this).find('.tm-artikeldetails__autor').text().trim()
+            if(productName && productAuthor){
+                const link = $(this).find('a.element-link-toplevel.tm-produkt-link').attr('href');
+                const product = {
+                    name: normalizeString(productName),
+                    author: normalizeString(productAuthor),
+                    link: link
+                }
+                products.push(product)
             }
         });
-        if(link){
-            return this.storeBaseUrl+link;
+        const authorThaliaFormat = normalizeString(bookAutor.split(",").reverse().join(" ").trim())
+        const normalizedTitel = normalizeString(bookName)
+        products = products.filter(
+            product=> {
+                return compareTwoStrings(product.author,authorThaliaFormat) >= 0.8;
+            }
+        )
+        if(products.length === 0 ){
+            console.log("No book found for "+bookName)
+            return ""
+        }
+        //find best match
+        const matches = findBestMatch(normalizedTitel,products.map(element => element.name))
+        if(matches.bestMatch.rating >= 0.8){
+            return this.storeBaseUrl+products[matches.bestMatchIndex].link;
+        }else if(matches.bestMatch.target.includes(normalizedTitel) || normalizedTitel.includes(matches.bestMatch.target)){
+            return this.storeBaseUrl+products[matches.bestMatchIndex].link;
         }else{
             console.log("No book found for "+bookName)
             return ""
         }
-
     }
 
     getStoreBookData(searchResponseData:any,url:string) :BookStoreItem{
         const $ = cheerio.load(searchResponseData);
         let bookData : BookStoreItem = new BookStoreItem();
         let self = this
-        $(".element-struktur-kachel-standard.hauptformat").each(function() {
+        const elements = $(".element-struktur-kachel-standard.hauptformat")
+        elements.each(function() {
             const caption = $(this).attr('caption');
             if (caption && self.storeItemMapping.has(caption)) {
                 const mappedValue = self.storeItemMapping.get(caption) as "price" | "priceEbook" | "pricePaperback";
@@ -62,11 +84,15 @@ export class ThaliaPrices implements StorePrices{
                 }
             }
         });
+        if(elements.length === 0){
+            bookData.price = $('.preis .element-headline-medium').first().text().trim();
+        }
         bookData.storeID = url.split("/").pop() as string
         bookData.url = url
         bookData.storeTag = this.storeTag
         return bookData
     }
+
 
 }
 

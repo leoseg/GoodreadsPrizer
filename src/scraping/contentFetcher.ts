@@ -38,7 +38,7 @@ export class AxiosFetcher implements ContentFetcher {
 @Service()
 export class PuppeteerFetcher implements ContentFetcher {
 
-    private poolSize: number = 5;
+    private poolSize: number = 3;
     private browser: any;
     private pages: Array<Page> = [];
     private waitingList: Array<any> = [];

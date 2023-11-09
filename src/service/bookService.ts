@@ -26,18 +26,22 @@ export class BookService{
     /**
      * Update the book prices for a user
      * @param user of the user to update the book prices for
+     * @param fullUpdate if true all books will be updated, if false only books that are not in the database will be updated
      */
-    async updateBookPricesForUser(user:GoodReadsUser){
+    async updateBookPricesForUser(user:GoodReadsUser,fullUpdate:boolean = false){
         var bookList = await getBookList(user)
         const orConditions = bookList.map(book => ({
             author: book.author,
             title: book.title,
         }));
-        const booksFromDB = await this.bookGoodReadRepository.find(
-            {where: orConditions,
-                relations:["storeItems"]
-            },
-        )
+        let booksFromDB : any[] = []
+        if(!fullUpdate){
+            booksFromDB = await this.bookGoodReadRepository.find(
+                {where: orConditions,
+                    relations:["storeItems"]
+                },
+            )
+        }
         const bookPricer : BookPricer = Container.get(this.algNameMap[config.PRICEALGORITHM])
         const bookListWithPrices = await bookPricer.scrapeBookPricesListForAllStores(
             bookList,booksFromDB
