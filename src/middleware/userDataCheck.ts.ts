@@ -3,6 +3,14 @@ import {AppDataSource} from "../db/postgresConfig";
 import {GoodReadsUser} from "../entity/goodReadsUser";
 
 const userRepository = AppDataSource.getRepository(GoodReadsUser);
+
+/**
+ * Middleware to check if the cognito user has a corresponding entry in the goodreadsuser db or is missing
+ * the data there
+ * @param request request passed trough middleware
+ * @param response response passed trough middleware containing the userid
+ * @param next next function to call
+ */
 export function userDataCheck (request:Request,response:Response,next:NextFunction)  {
     const id = response.locals.user.sub
     userRepository.findOne({ where: {id:id}

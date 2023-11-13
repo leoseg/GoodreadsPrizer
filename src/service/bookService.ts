@@ -11,7 +11,9 @@ import {AsyncPricer} from "../scraping/bookPricesScraper/bookPricerImplementatio
 const config = require("../config")
 
 
-
+/**
+ * Service for getting and updating the book prices
+ */
 @Service()
 export class BookService{
 

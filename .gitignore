@@ -40,3 +40,4 @@ dist/**/*
 # ignore yarn.lock
 yarn.lock
 /machinet.conf
+/lambda/function.zip

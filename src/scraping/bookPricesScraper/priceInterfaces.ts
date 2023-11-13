@@ -51,11 +51,23 @@ export interface StorePrices {
 
 }
 
+/**
+ * Interface for the book pricer which calls the store scrapers services and updates the book prices
+ */
 export interface BookPricer{
 
-
+    /**
+     * Returns the list of all prices not already in the booksFromDB
+     * @param bookList list of books to get the prices for
+     * @param booksFromDB books from the database to compare if prices already there
+     */
     scrapeBookPricesListForAllStores(bookList:Array<BookGoodRead>,booksFromDB:Array<BookGoodRead>) : Promise<Array<BookGoodRead>>
 
+    /**
+     * Updates the given book with store prices
+     * @param book book to update the prices for
+     * @param storePricesTag tag of the store to update the prices for
+     */
     updateStorePriceForBook(book:BookGoodRead,storePricesTag:string):Promise<BookGoodRead>
 
 

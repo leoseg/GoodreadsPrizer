@@ -3,6 +3,9 @@ import { Request, Response } from 'express';
 import { Service } from 'typedi';
 import { UserService } from '../service/userService';
 
+/**
+ * Controller for the user routes
+ */
 @Service()
 export class UserController {
     constructor(private userService: UserService) {}

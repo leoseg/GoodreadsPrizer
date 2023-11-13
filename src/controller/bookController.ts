@@ -3,7 +3,9 @@ import {BookService} from "../service/bookService";
 import {Request, Response} from "express";
 import {GoodReadsUser} from "../entity/goodReadsUser";
 
-
+/**
+ * Controller for the book routes
+ */
 @Service()
 export class BookController{
 
@@ -11,7 +13,9 @@ export class BookController{
     private bookService:BookService = Container.get(BookService)
 
     /**
-     * Update the book prices for a user with sse
+     * Update the book prices for a user with sse, if the request param fullUpdate is 'true'
+     * all the bookprices will be updated
+     * not only the ones not in the db
      * @param request request containing the userId in cookkies
      * @param response response containing the status of the request
      */
@@ -26,7 +30,6 @@ export class BookController{
             response.flushHeaders()
             response.write("data: connection established\n\n")
             const user = response.locals.user as GoodReadsUser
-            console.log(request.params.fullUpdate)
             await this.bookService.updateBookPricesForUser(user,request.params.fullUpdate == "true")
             response.write("data: Book price updating finished\n\n");
             request.on('close', () => {

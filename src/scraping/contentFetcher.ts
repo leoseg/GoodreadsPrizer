@@ -5,7 +5,9 @@ import {Page} from "puppeteer";
 import {Service} from "typedi";
 
 
-
+/**
+ * Interface for the content fetcher which fetches content from the store pages
+ */
 export interface ContentFetcher {
 
     /**
@@ -15,7 +17,9 @@ export interface ContentFetcher {
     fetchContent(url: string): Promise<string>
 }
 
-
+/**
+ * Implementation of the ContentFetcher interface using axios
+ */
 @Service()
 export class AxiosFetcher implements ContentFetcher {
 
@@ -35,6 +39,10 @@ export class AxiosFetcher implements ContentFetcher {
     }
 
 }
+
+/**
+ * Implementation of the ContentFetcher interface using puppeteer
+ */
 @Service()
 export class PuppeteerFetcher implements ContentFetcher {
 

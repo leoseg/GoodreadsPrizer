@@ -8,6 +8,13 @@ const cognitoExpress = new CognitoExpress({
     tokenUse: "access",
     tokenExpiration: 3600
 })
+
+/**
+ * Middleware to validate the access token
+ * @param request request containing the access token in cookies
+ * @param response response containing the status of the request and the user information
+ * @param next next function to call
+ */
 export function validateAuth (request : Request, response:Response, next:NextFunction)  {
     // Check that the request contains a token
     if (!request.cookies || !request.cookies.accessToken) return response.status(401).send({
