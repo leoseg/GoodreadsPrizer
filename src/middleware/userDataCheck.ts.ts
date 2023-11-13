@@ -9,10 +9,21 @@ export function userDataCheck (request:Request,response:Response,next:NextFuncti
     }).then((user) => {
         if (!user) {
             console.log("User with id: " + id + " not found");
-            return response.status(404).send({
-                error: "No user found",
-            })}
-        if( user.goodreadsID === " "|| user.goodreadsName === " "){
+            console.log("New user created with id: " + id);
+            userRepository.insert({id:id}).then(() => {
+                return response.status(406).send({
+                    error: "No goodreadsuserfound, new user created",
+                })
+                }).catch(
+                    (error) => {
+                        console.log(error)
+                        return response.status(500).send({
+                            error: "Something went wrong",
+                        })
+                    }
+            )
+            }
+        else if(user.goodreadsID === " "|| user.goodreadsName === " "){
             return response.status(406).send({
                 error: "No user data found for user with id: " + id,
             })
