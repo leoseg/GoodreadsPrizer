@@ -7,7 +7,7 @@ import {getBookList} from "../scraping/goodreadsBooksScraper/scrapeBooks";
 import {BookStoreItem} from "../entity/bookStoreItem";
 import {BookPricer} from "../scraping/bookPricesScraper/priceInterfaces";
 import "reflect-metadata";
-import {AsyncPricer} from "../scraping/bookPricesScraper/bookPricerImplementations";
+import {AsyncPricer, AsyncPricerRabbit} from "../scraping/bookPricesScraper/bookPricerImplementations";
 const config = require("../config")
 
 
@@ -22,7 +22,8 @@ export class BookService{
     private bookStoreItemRepository:Repository<BookStoreItem> = AppDataSource.getRepository(BookStoreItem);
 
     private algNameMap = {
-        AsyncPricer : AsyncPricer
+        AsyncPricer : AsyncPricer,
+        AsyncPricerRabbit : AsyncPricerRabbit
     }
 
     /**

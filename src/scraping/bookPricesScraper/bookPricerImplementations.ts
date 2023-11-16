@@ -4,6 +4,7 @@ import {Container, Service} from "typedi";
 import {BookPricer, StorePrices, StoreTag} from "./priceInterfaces";
 import "reflect-metadata";
 import { ThaliaPrices } from "./thaliaPrices";
+import {RabbitMQ} from "../../messagequeues/rabbitmq";
 
 
 
@@ -13,7 +14,7 @@ import { ThaliaPrices } from "./thaliaPrices";
 @Service()
 export class AsyncPricer implements BookPricer{
 
-    private tagImplMap = {
+    protected tagImplMap = {
        Thalia : ThaliaPrices
     }
 
@@ -102,13 +103,25 @@ export class AsyncPricer implements BookPricer{
         book.storeItems.push(bookItem)
         return book
     }
+}
 
+/**
+ * Class that extends async pricer but sends books for processing to rabbitmq queue
+ * where they get consumed from workers and then returned
+ */
+@Service()
+export class AsyncPricerRabbit extends AsyncPricer{
 
+    private rabbitMQService: RabbitMQ= Container.get(RabbitMQ)
+    public async updateStorePriceForBook(book: BookGoodRead, storePricesTag:string){
 
+        const message = {
+            book: book,
+            storePricesTag: storePricesTag
+        }
+        const result : string = await this.rabbitMQService.sendRPCMessage(JSON.stringify(message));
+        return JSON.parse(result)
 
-
-
-
-
+    }
 
 }
