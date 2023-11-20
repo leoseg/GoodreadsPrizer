@@ -35,14 +35,20 @@ export class RabbitMQ{
      * @param message message to send
      */
     public async sendRPCMessage(message): Promise<string> {
+        let timeoutHandle;
         const correlationID = randomUUID();
         const resultPromise: Promise<string> = new Promise<string>((resolve) => {
         this.responseEmitter.once(correlationID, (msg: string) => {
               resolve(msg);
+              clearTimeout(timeoutHandle);
             });
+            timeoutHandle = setTimeout(() => {
+                    this.responseEmitter.removeListener(correlationID, resolve);
+                    resolve(JSON.stringify({errorCode: 1 }));
+                }, config.RPCTIMEOUT);
             this.channel.sendToQueue(config.BOOKSQUEUENAME, Buffer.from(message), {
-              correlationId: correlationID,
-              replyTo: REPLY_QUEUE,
+                correlationId: correlationID,
+                replyTo: REPLY_QUEUE,
             });
          }).catch((err) => {
             console.log(err);

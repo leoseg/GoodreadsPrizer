@@ -14,6 +14,7 @@ import {RabbitMQ} from "../../messagequeues/rabbitmq";
 @Service()
 export class AsyncPricer implements BookPricer{
 
+
     protected tagImplMap = {
        Thalia : ThaliaPrices
     }
@@ -116,11 +117,33 @@ export class AsyncPricerRabbit extends AsyncPricer{
     public async updateStorePriceForBook(book: BookGoodRead, storePricesTag:string){
 
         const message = {
-            book: book,
+            book: {
+                title: book.title,
+                author: book.author
+            },
             storePricesTag: storePricesTag
         }
         const result : string = await this.rabbitMQService.sendRPCMessage(JSON.stringify(message));
-        return JSON.parse(result)
+        const resultJson : any = JSON.parse(result)
+        const bookItem = new BookStoreItem()
+        bookItem.storeTag = storePricesTag
+        bookItem.price = " "
+        bookItem.priceEbook = " "
+        bookItem.pricePaperback = " "
+        bookItem.storeID = "Not found"
+        bookItem.url = "Not found"
+        if(resultJson.errorCode == 1){
+            book.storeItems.push(bookItem)
+        }
+        if(resultJson.errorCode == 2){
+            console.log("Error occurred during rabbitmq message processing, returning book without new storebook")
+            book.storeItems.push(bookItem)
+        }else if(resultJson.errorCode == 0){
+            resultJson.delete("errorCode")
+            const bookStoreItem : BookStoreItem =  JSON.parse(result)
+            book.storeItems.push(bookStoreItem);
+        }
+        return book
 
     }
 
