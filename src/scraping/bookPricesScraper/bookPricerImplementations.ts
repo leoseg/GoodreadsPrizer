@@ -133,15 +133,19 @@ export class AsyncPricerRabbit extends AsyncPricer{
         bookItem.storeID = "Not found"
         bookItem.url = "Not found"
         if(resultJson.errorCode == 1){
+            console.log("Timeout occurred during rabbitmq message processing, returning book without new storebook")
             book.storeItems.push(bookItem)
         }
         if(resultJson.errorCode == 2){
             console.log("Error occurred during rabbitmq message processing, returning book without new storebook")
             book.storeItems.push(bookItem)
         }else if(resultJson.errorCode == 0){
-            resultJson.delete("errorCode")
-            const bookStoreItem : BookStoreItem =  JSON.parse(result)
-            book.storeItems.push(bookStoreItem);
+            bookItem.storeID = resultJson.storeID
+            bookItem.url = resultJson.url
+            bookItem.price = resultJson.price
+            bookItem.priceEbook = resultJson.priceEbook
+            bookItem.pricePaperback = resultJson.pricePaperback
+            book.storeItems.push(bookItem);
         }
         return book
 

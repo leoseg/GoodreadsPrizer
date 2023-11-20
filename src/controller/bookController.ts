@@ -30,7 +30,7 @@ export class BookController{
             response.flushHeaders()
             response.write("data: connection established\n\n")
             const user = response.locals.user as GoodReadsUser
-            await this.bookService.updateBookPricesForUser(user,request.params.fullUpdate == "true")
+            await this.bookService.updateBookPricesForUser(user,request.query.fullUpdate == "true")
             response.write("data: Book price updating finished\n\n");
             request.on('close', () => {
                 response.end();
