@@ -114,6 +114,7 @@ export class AsyncPricer implements BookPricer{
 export class AsyncPricerRabbit extends AsyncPricer{
 
     private rabbitMQService: RabbitMQ= Container.get(RabbitMQ)
+
     public async updateStorePriceForBook(book: BookGoodRead, storePricesTag:string){
 
         const message = {

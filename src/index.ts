@@ -39,9 +39,22 @@ AppDataSource.initialize().then( async ()=>{
         app.listen(config.PORT)
         console.log(`Express server has started on port ${config.PORT}. Open http://localhost:${config.PORT}/ to see results`)
     }).catch(
-    (err) => console.log(err)
+    (err) => {
+        console.log(err);
+        shutdown()
+    }
 )
 
+async function shutdown() {
+    try {
+        await rabbitmq.close();
+        console.log('Cleanup completed successfully.');
+        process.exit(0);
+    } catch (error) {
+        console.error('Error during shutdown:', error);
+        process.exit(1);
+    }
+}
 
 
 

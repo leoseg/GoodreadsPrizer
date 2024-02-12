@@ -3,8 +3,9 @@ const config = require("../config")
 import amqp from "amqplib";
 import EventEmitter from "events";
 import {randomUUID} from "crypto";
+import {clearTimeout} from "timers";
 
-const REPLY_QUEUE:string = "amq.rabbitmq.reply-to"
+
 
 /**
  * Service for sending and receiving messages from the rabbitmq message queue
@@ -22,9 +23,9 @@ export class RabbitMQ{
             return connection.createChannel();
         })
         await this.channel.assertQueue(config.BOOKSQUEUENAME)
-        await this.channel.assertQueue(REPLY_QUEUE)
+        await this.channel.assertQueue(config.REPLY_QUEUE)
         this.responseEmitter.setMaxListeners(0);
-        await this.channel.consume(REPLY_QUEUE,
+        await this.channel.consume(config.REPLY_QUEUE,
       (msg) =>
           this.responseEmitter.emit(msg.properties.correlationId, msg.content),
       {noAck: true});
@@ -48,12 +49,28 @@ export class RabbitMQ{
                 }, config.RPCTIMEOUT);
             this.channel.sendToQueue(config.BOOKSQUEUENAME, Buffer.from(message), {
                 correlationId: correlationID,
-                replyTo: REPLY_QUEUE,
+                replyTo: config.REPLY_QUEUE,
             });
          }).catch((err) => {
             console.log(err);
             throw new Error("Error sending message to queue");
-        });
+        }).finally(
+            () => {
+                clearTimeout(timeoutHandle);
+                this.responseEmitter.removeListener(correlationID, () => {});
+            }
+        );
         return await resultPromise;
     }
+
+    /**
+     * Closes the connection to the rabbitmq message queue
+     */
+    public async close(): Promise<void> {
+        if (this.channel) {
+            await this.channel.close();
+            console.log("RabbitMQ channel closed.");
+        }
+    }
+
 }
