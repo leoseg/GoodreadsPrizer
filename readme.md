@@ -58,3 +58,11 @@ Description: Logs out the current user. This endpoint cleans the session Cookie.
 - The bookService uses a BookPrizer interface which can be used to implement different strategies for getting the prices from the scores, this way it can be flexible changed in case for later changes
 - The bookController uses SSE to send the results to the client, this way the client can get the results as soon as they are available without keeping a http connection open
 - In the first place scrapping was done by the main server but I have decided to outsource it to a microservice and choose to use RabbitMQ as message broker for indepence scaling and development
+
+## Data Model
+- There are 3 main entities: User, BookGoodRead and BookStoreItem and 1 Helping Entity: StoreTag. 
+- The User entity is used to store the user information is directly linked to the AWS user used for login
+- The User and the BookGoodRead entity are linked by a many to many relationship, this way a user can have multiple books and a book can be owned by multiple users
+- The BookGoodRead and the BookStoreItem are linked by a one to many relationship, this way a book can have multiple store items and a store item can only belong to one book
+- The StoreTag is used to store the store tags which are used as a composite key for the BookStoreItem entity, ensuring that there are only valid store tags in the DB
+- BookstoreItems could be partitioned by store tag, this way the DB could be sharded by store tag in future, or one the userid in join table in the many to many relationship
