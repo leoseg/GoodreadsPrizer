@@ -64,7 +64,7 @@ export class BookService{
             .select(["entry","book"])
             .innerJoin("entry.bookGoodRead", "book")
             .innerJoin("user_book", "ub", "ub.bookGoodReadAuthor = book.author AND ub.bookGoodReadTitle = book.title")
-            .where("ub.goodReadsUserId = :userID", { userID: user.id });
+            .where("ub.goodReadsUserId = :userID", { userID: user.id }).cache(true);
 
         // If a tag is provided, filter by it
         if (storeTag) {

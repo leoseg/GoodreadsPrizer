@@ -19,7 +19,7 @@ export function userDataCheck (request:Request,response:Response,next:NextFuncti
         })
     }
     const id = response.locals.user.sub
-    userRepository.findOne({ where: {id:id}
+    userRepository.findOne({ where: {id:id} , cache: true
     }).then((user) => {
         if (!user) {
             console.log("User with id: " + id + " not found");
