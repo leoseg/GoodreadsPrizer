@@ -12,7 +12,7 @@ authRouter.get('/auth/callback', async (request, response) => {
     const { code } = request.query;
 
     // Exchange the authorization code for tokens
-    const tokenUrl = `${cognitoDomain}/oauth2/token`;
+    const tokenUrl = `https://${cognitoDomain}/oauth2/token`;
     const body = {
         grant_type: 'authorization_code',
         client_id: clientId,
@@ -32,16 +32,19 @@ authRouter.get('/auth/callback', async (request, response) => {
         });
         // Set tokens in HTTP-only cookies
         response.cookie('accessToken', axiosResponse.data.access_token, {
+            sameSite: 'strict',
             httpOnly: true,
             secure: config.SECURE_COOKIE// set to true if using https
         });
         response.cookie('idToken', axiosResponse.data.id_token, {
+            sameSite: 'strict',
             httpOnly: true,
             secure: config.SECURE_COOKIE// set to true if using https
         });
 
         // Redirect to the frontend application
-        response.redirect(config.FRONTEND_URL);
+        //response.redirect(config.FRONTEND_URL);
+        response.status(200).send("User logged in successfully");
     } catch (error) {
         console.error('Error exchanging auth code for tokens:', error);
         response.status(500).send('Authentication error');

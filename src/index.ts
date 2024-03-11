@@ -22,14 +22,30 @@ AppDataSource.initialize().then( async ()=>{
 }}).then(
     () => {
         var corsOptions = {
-            origin: "http://localhost:3001",
+            origin: config.PUBLIC_FRONTEND_URL,
             credentials: true
         }
-
         // create express app
         const app = express()
         app.use(json())
+        // Setting security headers
         app.use(cors(corsOptions));
+        app.use((req, res, next) => {
+          res.header("X-Content-Type-Options", "nosniff");
+          next();
+        });
+        app.use((req, res, next) => {
+          res.setHeader("Feature-Policy", "geolocation 'none'; microphone 'none'; camera 'none'; display-capture 'none'; payment 'none'");
+          next();
+        });
+        app.use(function(req, res, next) {
+          res.header("X-Permitted-Cross-Domain-Policies", "none");
+          next();
+        });
+        app.use((req, res, next) => {
+          res.header("Referrer-Policy", "same-origin");
+          next();
+        });
         app.use(cookieParser());
         app.use("/users",validateAuth,userRouter)
         app.use("/books",validateAuth,userDataCheck,booksRouter)
