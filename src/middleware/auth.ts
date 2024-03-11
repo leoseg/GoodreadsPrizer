@@ -22,8 +22,9 @@ export function validateAuth (request : Request, response:Response, next:NextFun
         detail: "Access Token missing from header"
     })
     let accessTokenFromClient = request.cookies.accessToken;
-        // Validate the token and if valid, the response will contain user information
-            response.locals.user = cognitoResponse;
-            next();
-        });
+    // Validate the token and if valid, the response will contain user information
+    cognitoExpress.validate(accessTokenFromClient, function (err: any, cognitoResponse: Response) {
+        response.locals.user = cognitoResponse;
+        next();
+    });
 }
