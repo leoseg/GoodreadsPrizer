@@ -12,7 +12,7 @@ jobs:
       postgres:
         image: postgres:12
         env:
-          POSTGRES_USER: testuser
+          POSTGRES_USER: test-user
           POSTGRES_PASSWORD: testpassword
           POSTGRES_DB: test-db
         options: >-
@@ -45,6 +45,8 @@ jobs:
           DB_HOST: localhost
           PRICEALGORITHM: AsyncPricer
           SECURE_COOKIE: False
+          GOODREADS_USERID: 161705774
+          GOODREADS_USERNAME: "Leo Seeger"
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
