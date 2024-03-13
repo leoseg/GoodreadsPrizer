@@ -66,3 +66,20 @@ Description: Logs out the current user. This endpoint cleans the session Cookie.
 - The BookGoodRead and the BookStoreItem are linked by a one to many relationship, this way a book can have multiple store items and a store item can only belong to one book
 - The StoreTag is used to store the store tags which are used as a composite key for the BookStoreItem entity, ensuring that there are only valid store tags in the DB
 - BookstoreItems could be partitioned by store tag, this way the DB could be sharded by store tag in future, or one the userid in join table in the many to many relationship
+
+## Local Deployment
+- Install Micro8ks, optionally use another kubernetes provider
+- Install rabbitmq kubernetes plugin with
+    ```console 
+  microk8s kubectl apply -f "https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml" 
+    ```
+- Enable storage on local host for this cluster (only for development and local deployment)
+    ```console
+    microk8s enable hostpath-storage
+    ```
+- Add secret.yaml with the schema like in the example in secret_example.yaml to the kubernetesconfigs directory,  you should have an aws cognito running with an hosted ui
+- After that you can deploy the kubernetes configs with
+    ```console
+    microk8s kubectl apply -f kubernetesconfigs -R
+    ```
+- The frontend should be now accesible under localhost:32001

@@ -1,6 +1,6 @@
 {
     "watch": ["src"],
-    "ext": ".js",
+    "ext": ".ts",
     "ignore": [],
     "exec": "tsc && node build/index.js"
 }

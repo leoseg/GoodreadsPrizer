@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scrapper
+  namespace: goodreadsprizer
+  labels:
+    app: scrapper
+spec:
+  replicas: 1
+  selector:
+      matchLabels:
+        app: scrapper
+  template:
+    metadata:
+      labels:
+        app: scrapper
+    spec:
+      containers:
+        - name: scrapper
+          image: lseeger/scrapper:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: POOL_SIZE
+              value: "2"
+            - name: IS_CONTAINER
+              value: "true"
+            - name: DRIVER_URL
+              value: "http://selenium-hub:4444/wd/hub"
+            - name: RABBITMQ_HOST
+              value:  "rabbitmq.rabbitmq-system.svc.cluster.local"
+          resources:
+            limits:
+              memory: "1000Mi"
+              cpu: ".5"
+

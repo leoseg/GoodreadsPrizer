@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-volume-claim
+  namespace: goodreadsprizer
+  labels:
+    app: postgres
+spec:
+  storageClassName: manual
+  volumeName: postgres-volume
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi

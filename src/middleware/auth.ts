@@ -1,6 +1,7 @@
 import CognitoExpress from "cognito-express"
 import {Request,Response,NextFunction} from "express"
 const config = require("../config")
+console.log(config)
 // Setup CognitoExpress
 const cognitoExpress = new CognitoExpress({
     region: config.AWS_DEFAULT_REGION,
