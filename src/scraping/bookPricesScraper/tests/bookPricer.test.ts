@@ -24,7 +24,8 @@ describe("BookPricer", () => {
         // Create an instance of BookPricer with the mock StorePrices
         bookPricer = new AsyncPricer();
         mockStorePrices.contentFetcher = {
-            fetchContent: jest.fn().mockResolvedValueOnce("").mockResolvedValueOnce("bookpage1")
+            fetchContent: jest.fn().mockResolvedValueOnce("").mockResolvedValueOnce("bookpage1"),
+            close: jest.fn()
         }
         Container.set(ThaliaPrices,mockStorePrices)
     });

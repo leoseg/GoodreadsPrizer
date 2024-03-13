@@ -13,6 +13,11 @@ describe("ThaliaPrices", () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
+
+    // afterAll(() => {
+    //     thaliaPricesTestClass.contentFetcher.close();
+    // });
+
     describe("getStoreSearchParams", () => {
         it("should return title + author", () => {
             const bookData = new BookGoodRead();

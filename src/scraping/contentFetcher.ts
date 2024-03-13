@@ -15,6 +15,11 @@ export interface ContentFetcher {
      * @param url url of the page to scrape
      */
     fetchContent(url: string): Promise<string>
+
+    /**
+     * Closes the content fetcher
+     */
+    close(): Promise<void>
 }
 
 /**
@@ -36,6 +41,10 @@ export class AxiosFetcher implements ContentFetcher {
                 throw new Error(`Error fetching content from ${url}`);
             })
        return content.data
+    }
+
+    public async close() {
+        //Nothing to close
     }
 
 }

@@ -19,6 +19,7 @@ describe('utils', () => {
 
     afterAll(async () => {
         await page.close();
+        await page.browser().close()
     });
 
     describe('loadPuppeteerPage', () => {
