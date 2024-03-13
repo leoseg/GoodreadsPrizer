@@ -13,7 +13,7 @@ jobs:
         image: postgres:12
         env:
           POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: " "
+          POSTGRES_PASSWORD: ""
           POSTGRES_DB: test-db
         options: >-
           --health-cmd pg_isready
