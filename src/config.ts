@@ -30,5 +30,6 @@ module.exports = {
     BOOKSQUEUENAME: process.env.BOOKSQUEUENAME || "books",
     RABBITMQURL: process.env.RABBIT_MQ_URL || "amqp://guest:guest@localhost:5672/",
     RPCTIMEOUT: process.env.RPCTIMEOUT || "300000",
-    REPLY_QUEUE: process.env.REPLY_QUEUE || "amq.rabbitmq.reply-to"
+    REPLY_QUEUE: process.env.REPLY_QUEUE || "amq.rabbitmq.reply-to",
+    PUBLIC_FRONTEND_URL: process.env.PUBLIC_FRONTEND_URL || "http://localhost:3001",
 }

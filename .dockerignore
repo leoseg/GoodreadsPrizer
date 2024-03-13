@@ -1,0 +1,8 @@
+node_modules
+src/.env.test
+src/.env.development
+.csr.pem
+.key.pem
+lambda
+build
+kubernetesconfigs/backend/secret.yaml
