@@ -13,7 +13,7 @@ jobs:
         image: postgres:12
         env:
           POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: ""
+          POSTGRES_PASSWORD: testpassword
           POSTGRES_DB: test-db
         options: >-
           --health-cmd pg_isready
@@ -39,7 +39,7 @@ jobs:
         env:
           DB_NAME: test-db
           DB_USER: test-user
-          DB_PASSWORD: " "
+          DB_PASSWORD: testpassword
           DROP_SCHEMA: True
           DB_PORT: 5433
           DB_HOST: localhost
