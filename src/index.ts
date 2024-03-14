@@ -29,7 +29,7 @@ AppDataSource.initialize().then( async ()=>{
         const app = express()
         app.use(json())
         // Setting security headers
-        app.use(cors(corsOptions));
+        // app.use(cors(corsOptions));
         app.use((req, res, next) => {
           res.header("X-Content-Type-Options", "nosniff");
           next();
