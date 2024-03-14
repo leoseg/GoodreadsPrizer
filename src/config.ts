@@ -25,7 +25,7 @@ module.exports = {
     DB_PORT : process.env.DB_PORT || 5433,
     DROP_SCHEMA : process.env.DROP_SCHEMA || false,
     PRICEALGORITHM : process.env.PRICEALGORITHM || "AsyncPricer",
-    SECURE_COOKIE : process.env.SECURE_COOKIE || true,
+    SECURE_COOKIE : process.env.SECURE_COOKIE || false,
     FRONTEND_URL : process.env.FRONTEND_URL || "http://localhost:3001",
     BOOKSQUEUENAME: process.env.BOOKSQUEUENAME || "books",
     RABBITMQURL: process.env.RABBIT_MQ_URL || "amqp://guest:guest@localhost:5672/",

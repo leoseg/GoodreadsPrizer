@@ -43,6 +43,7 @@ authRouter.get('/auth/callback', async (request, response) => {
 
         response.status(200).redirect(config.FRONTEND_URL);
     } catch (error) {
+        console.log(error)
         console.error('Error exchanging auth code for tokens:', error);
         response.status(500).send('Authentication error');
     }
