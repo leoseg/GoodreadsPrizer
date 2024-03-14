@@ -22,7 +22,7 @@ AppDataSource.initialize().then( async ()=>{
 }}).then(
     () => {
         var corsOptions = {
-            origin: config.PUBLIC_FRONTEND_URL,
+            origin: [config.PUBLIC_FRONTEND_URL,"https://goodreadspricerlogin.auth.sa-east-1.amazoncognito.com"],
             credentials: true
         }
         // create express app
