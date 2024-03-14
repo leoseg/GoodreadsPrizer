@@ -22,14 +22,13 @@ AppDataSource.initialize().then( async ()=>{
 }}).then(
     () => {
         var corsOptions = {
-            origin: [config.PUBLIC_FRONTEND_URL,"https://goodreadspricerlogin.auth.sa-east-1.amazoncognito.com"],
+            origin: [config.PUBLIC_FRONTEND_URL],
             credentials: true
         }
         // create express app
         const app = express()
         app.use(json())
-        // Setting security headers
-        // app.use(cors(corsOptions));
+        app.use(cors(corsOptions));
         app.use((req, res, next) => {
           res.header("X-Content-Type-Options", "nosniff");
           next();

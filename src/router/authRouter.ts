@@ -45,7 +45,7 @@ authRouter.get('/auth/callback', async (request, response) => {
     } catch (error) {
         console.log(error)
         console.error('Error exchanging auth code for tokens:', error);
-        response.status(500).send(error);
+        response.status(500).send("Authentication failed");
     }
 });
 //check if the user is logged in
