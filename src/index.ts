@@ -23,7 +23,7 @@ AppDataSource.initialize().then( async ()=>{
     () => {
         console.log(config)
         var corsOptions = {
-            origin: [config.PUBLIC_FRONTEND_URL],
+            origin: config.PUBLIC_FRONTEND_URL,
             credentials: true
         }
         // create express app

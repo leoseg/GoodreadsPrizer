@@ -23,8 +23,6 @@ spec:
           env:
             - name: DB_HOST
               value: "postgres"
-            - name : SECURE_COOKIE
-              value: "false"
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
