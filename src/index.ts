@@ -21,6 +21,7 @@ AppDataSource.initialize().then( async ()=>{
     console.log("rabbitmq initialized")
 }}).then(
     () => {
+        console.log(config)
         var corsOptions = {
             origin: [config.PUBLIC_FRONTEND_URL],
             credentials: true

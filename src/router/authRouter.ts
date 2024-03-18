@@ -50,6 +50,7 @@ authRouter.get('/auth/callback', async (request, response) => {
 });
 //check if the user is logged in
 authRouter.get('/auth/check', async (request, response) => {
+    console.log(request)
     if (!request.cookies || !request.cookies.accessToken) {
         return response.status(401).send({
             error: "Not authenticated",
