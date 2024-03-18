@@ -26,15 +26,17 @@ AppDataSource.initialize().then( async ()=>{
         //     origin: config.PUBLIC_FRONTEND_URL,
         //     credentials: true
         // }
-        // create express app
-        const corsOptions = {
-            origin: function (origin, callback) {
-                // allow any origin
-                callback(null, true)
-            },
-            credentials: true,
+        var corsOptions = {
+            origin: '*',
+            optionsSuccessStatus: 200,
+            credentials: true
         }
+        // create express app
         const app = express()
+        app.use((req, res, next) => {
+          console.log(`Origin: ${req.header('Origin')}`);
+          next();
+        });
         app.use(json())
         app.use(cors(corsOptions));
         app.use((req, res, next) => {
