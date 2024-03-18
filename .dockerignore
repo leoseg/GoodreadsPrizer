@@ -5,4 +5,4 @@ src/.env.development
 .key.pem
 lambda
 build
-kubernetesconfigs/backend/secret.yaml
+kubernetesconfigs/components/backend/secret.yaml

@@ -77,7 +77,7 @@ Description: Logs out the current user. This endpoint cleans the session Cookie.
     ```console
     microk8s enable hostpath-storage
     ```
-- Add secret.yaml with the schema like in the example in secret_example.yaml to the kubernetesconfigs directory,  you should have an aws cognito running with an hosted ui
+- Add secret.yaml with the schema like in the example in secret_example.yaml to the kubernetesconfigs/config directory,  you should have an aws cognito running with an hosted ui
 - After that you can deploy the kubernetes configs with
     ```console
     microk8s kubectl apply -f kubernetesconfigs -R

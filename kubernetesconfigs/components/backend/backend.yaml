@@ -77,13 +77,13 @@ spec:
                   key: LOGIN_URL
             - name: FRONTEND_URL
               valueFrom:
-                secretKeyRef:
-                  name: kubesecret
+                configMapKeyRef:
+                  name: configlocal
                   key: PUBLIC_FRONTEND_URL
             - name: PUBLIC_FRONTEND_URL
               valueFrom:
-                secretKeyRef:
-                  name: kubesecret
+                configMapKeyRef:
+                  name: configlocal
                   key: PUBLIC_FRONTEND_URL
           resources:
             limits:
