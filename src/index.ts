@@ -22,11 +22,18 @@ AppDataSource.initialize().then( async ()=>{
 }}).then(
     () => {
         console.log(config)
-        var corsOptions = {
-            origin: config.PUBLIC_FRONTEND_URL,
-            credentials: true
-        }
+        // var corsOptions = {
+        //     origin: config.PUBLIC_FRONTEND_URL,
+        //     credentials: true
+        // }
         // create express app
+        const corsOptions = {
+            origin: function (origin, callback) {
+                // allow any origin
+                callback(null, true)
+            },
+            credentials: true,
+        }
         const app = express()
         app.use(json())
         app.use(cors(corsOptions));
