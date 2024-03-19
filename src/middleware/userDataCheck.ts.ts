@@ -42,6 +42,7 @@ export function userDataCheck (request:Request,response:Response,next:NextFuncti
                 error: "No user data found for user with id: " + id,
             })
         }else{
+            console.log("User with id: " + id + " found",user.goodreadsName)
             response.locals.user= user
             next()
         }

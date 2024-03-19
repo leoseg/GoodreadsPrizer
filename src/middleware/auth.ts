@@ -25,6 +25,7 @@ export function validateAuth (request : Request, response:Response, next:NextFun
     let accessTokenFromClient = request.cookies.accessToken;
     // Validate the token and if valid, the response will contain user information
     cognitoExpress.validate(accessTokenFromClient, function (err: any, cognitoResponse: Response) {
+        console.log("Cognito response was: ",cognitoResponse)
         response.locals.user = cognitoResponse;
         next();
     });
