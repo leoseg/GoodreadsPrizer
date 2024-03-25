@@ -1,4 +1,4 @@
-import puppeteer, { Page} from "puppeteer";
+import puppeteer, {Page, PuppeteerLaunchOptions} from "puppeteer";
 import {minimal_args, userAgents} from "./scrapeBooksConfigs";
 import {BookGoodRead} from "../../entity/bookGoodRead";
 
@@ -127,14 +127,18 @@ export async function userNameCheck(page: Page, userName: string): Promise<void>
  */
 export async function loadPuppeteerPage(url: string): Promise<Page> {
     console.time("loadbrowser");
-    const browser = await puppeteer.launch({
+    let puppeteerOptions: PuppeteerLaunchOptions = {
         headless: "new",
         args: minimal_args,
         defaultViewport: {
             width: 1280,
             height: 1500
         }
-    });
+    }
+    if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+        puppeteerOptions["executablePath"] = process.env.PUPPETEER_EXECUTABLE_PATH
+    }
+    const browser = await puppeteer.launch(puppeteerOptions);
     const page = await browser.newPage();
     console.timeEnd("loadbrowser")
     await page.setRequestInterception(true);
