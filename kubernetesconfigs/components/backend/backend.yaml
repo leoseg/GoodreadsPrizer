@@ -41,7 +41,7 @@ spec:
                   name: kubesecret
                   key: DB_NAME
             - name: RABBIT_MQ_URL
-              value:  "ampq://guest:guest@rabbitmq.rabbitmq-system.svc.cluster.local:5672"
+              value:  "amqp://guest:guest@rabbitmq.rabbitmq-system.svc.cluster.local:5672"
             - name: COGNITO_USER_POOL_ID
               valueFrom:
                 secretKeyRef:

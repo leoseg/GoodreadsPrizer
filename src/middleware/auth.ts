@@ -27,10 +27,18 @@ export function validateAuth (request : Request, response:Response, next:NextFun
     cognitoExpress.validate(accessTokenFromClient, function (err: any, cognitoResponse: Response) {
     if (err) {
         console.error('Token validation failed:', err);
+        if(err.message === "jwt expired"){
+            response.clearCookie("accessToken")
+            response.status(401).send({
+                error: "Token expired",
+                detail: "Access Token expired"
+            })
+        }
         response.status(500).json({
             message: 'Internal server error',
             error: err.message,
         });
+
     } else {
         console.log("Cognito response was: ", cognitoResponse);
         response.locals.user = cognitoResponse;
