@@ -85,6 +85,11 @@ spec:
                 configMapKeyRef:
                   name: configlocal
                   key: PUBLIC_FRONTEND_URL
+            - name: PRICEALGORITHM
+              valueFrom:
+                configMapKeyRef:
+                  name: configlocal
+                  key: PRICEALGORITHM
           resources:
             limits:
               memory: "1000Mi"

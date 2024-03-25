@@ -12,8 +12,10 @@ const userRepository = AppDataSource.getRepository(GoodReadsUser);
  * @param next next function to call
  */
 export function userDataCheck (request:Request,response:Response,next:NextFunction)  {
+    console.log("Checking if user has goodreads data")
     if(!response.locals.user){
         response.clearCookie("accessToken");
+        console.log("User not logged in")
         return response.status(401).send({
             error: "User not logged in",
         })
