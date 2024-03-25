@@ -19,7 +19,7 @@ export class RabbitMQ{
      * Initializes the connection to the rabbitmq message queue
      */
     public async initialize() {
-        this.channel   =await amqp.connect(config.RABBIT_MQ_URL).then((connection) => {
+        this.channel   =await amqp.connect(config.RABBITMQURL).then((connection) => {
             return connection.createChannel();
         })
         await this.channel.assertQueue(config.BOOKSQUEUENAME)
