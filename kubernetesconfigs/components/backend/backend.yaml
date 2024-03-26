@@ -92,6 +92,8 @@ spec:
                 configMapKeyRef:
                   name: configlocal
                   key: PRICEALGORITHM
+            - name: PUPPETEER_EXECUTABLE_PATH
+              value: "/usr/bin/google-chrome"
           resources:
             limits:
               memory: "1000Mi"
