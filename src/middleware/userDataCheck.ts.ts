@@ -24,7 +24,7 @@ export function userDataCheck (request:Request,response:Response,next:NextFuncti
     userRepository.findOne({ where: {id:id} , cache: true
     }).then((user) => {
         if (!user) {
-            console.log("User with id: " + id + " not found");
+            console.log("User not found");
             console.log("New user created with id: " + id);
             userRepository.insert({id:id}).then(() => {
                 return response.status(406).send({
@@ -41,10 +41,10 @@ export function userDataCheck (request:Request,response:Response,next:NextFuncti
             }
         else if(user.goodreadsID === " "|| user.goodreadsName === " "){
             return response.status(406).send({
-                error: "No user data found for user with id: " + id,
+                error: "No user data found for user"
             })
         }else{
-            console.log("User with id: " + id + " found",user.goodreadsName)
+            console.log("User with name: " + user.goodreadsName+ " found")
             response.locals.user= user
             next()
         }

@@ -1,7 +1,6 @@
 import CognitoExpress from "cognito-express"
 import {Request,Response,NextFunction} from "express"
 const config = require("../config")
-console.log(config)
 // Setup CognitoExpress
 const cognitoExpress = new CognitoExpress({
     region: config.AWS_DEFAULT_REGION,
@@ -40,7 +39,6 @@ export function validateAuth (request : Request, response:Response, next:NextFun
         });
 
     } else {
-        console.log("Cognito response was: ", cognitoResponse);
         response.locals.user = cognitoResponse;
         next();
     }
