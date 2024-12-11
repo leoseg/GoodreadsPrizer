@@ -4,6 +4,9 @@ The idea of this project is to get the list of desired books from
 a Goodreads shelf and then get the best price for each book from 
 different online-stores.
 
+### Note
+As Thalia and Goodreads have no API, and the layout of the pages changed scrapping is not working in the moment. 
+
 ## Components
 - Goodreads API: This repository which acts as main server to handle user requests
   - Forwards them to the corresponding microservice for scrapping
